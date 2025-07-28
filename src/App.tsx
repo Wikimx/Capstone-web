@@ -156,7 +156,7 @@ function App() {
 
       try {
         // Make API call
-        const response = await fetch("/ask", {
+        const response = await fetch("https://a7a1bbaf0574.ngrok-free.app/ask", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
