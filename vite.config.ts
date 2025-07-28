@@ -11,7 +11,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/ask': {
-        target: 'https://b306f51d97a5.ngrok-free.app',
+        target: 'https://bcab2b1232f4.ngrok-free.app',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/ask/, '/ask'),
