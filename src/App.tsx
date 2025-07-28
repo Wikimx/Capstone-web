@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { ChevronDown, ArrowRight } from 'lucide-react';
 
 function App() {
@@ -49,6 +49,38 @@ function App() {
 
   const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, children, defaultOpen = false }) => {
     const [isOpen, setIsOpen] = useState(defaultOpen);
+    const [contentHeight, setContentHeight] = useState<number>(0);
+    const contentRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      if (isOpen && contentRef.current) {
+        // Set the height to auto initially to get the full height
+        setContentHeight(contentRef.current.scrollHeight);
+
+        // Set up a MutationObserver to watch for changes in the content
+        const observer = new MutationObserver(() => {
+          // When content changes, update the height
+          if (contentRef.current) {
+            setContentHeight(contentRef.current.scrollHeight);
+          }
+        });
+
+        // Start observing the content for changes
+        observer.observe(contentRef.current, {
+          childList: true,      // Watch for changes to child elements
+          subtree: true,        // Watch all descendants, not just direct children
+          characterData: true,  // Watch for changes to text content
+          attributes: true      // Watch for changes to attributes
+        });
+
+        // Clean up the observer when component unmounts or dependencies change
+        return () => {
+          observer.disconnect();
+        };
+      } else {
+        setContentHeight(0);
+      }
+    }, [isOpen, children]); // Re-measure when children change (e.g., when response is loaded)
 
     return (
       <div className="mb-8 bg-white rounded-xl shadow-sm border border-[#95B1EE] overflow-hidden transition-all duration-300 hover:shadow-md">
@@ -61,8 +93,11 @@ function App() {
             <ChevronDown size={24} className="text-[#ECE9DF]" />
           </div>
         </button>
-        <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
-          <div className="px-8 pb-8">
+        <div 
+          className="transition-all duration-500 ease-in-out overflow-hidden"
+          style={{ maxHeight: `${contentHeight}px`, opacity: isOpen ? 1 : 0 }}
+        >
+          <div className="px-8 pb-8" ref={contentRef}>
             {children}
           </div>
         </div>
@@ -82,11 +117,23 @@ function App() {
     const [loading, setLoading] = React.useState<boolean>(false);
     const [error, setError] = React.useState<string | null>(null);
     const [submitted, setSubmitted] = React.useState<boolean>(false);
+    const [contentKey, setContentKey] = React.useState<number>(0); // Used to force re-render
 
     const profiles = [
       { id: "cdmx_c-d+_18-25", name: "CDMX Working-class youth (C-D+, 18–25)" },
       { id: "mty_c+b_35-55", name: "Monterrey Middle-class adults (C+B, 35–55)" }
     ];
+
+    // Update the content key when response changes to trigger parent recalculation
+    useEffect(() => {
+      if (response) {
+        // Small delay to ensure the DOM has updated with the new content
+        const timer = setTimeout(() => {
+          setContentKey(prevKey => prevKey + 1);
+        }, 100);
+        return () => clearTimeout(timer);
+      }
+    }, [response]);
 
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -120,14 +167,12 @@ function App() {
         });
 
         if (!response.ok) {
-          console.log("AAAH")
           throw new Error(`API request failed with status ${response.status}`);
         }
 
         const data = await response.json();
         setResponse(data.response);
       } catch (err) {
-        console.log("jjjj")
         setError(err instanceof Error ? err.message : "An unknown error occurred");
       } finally {
         setLoading(false);
@@ -143,7 +188,10 @@ function App() {
     };
 
     return (
-      <div className={`${height} border-2 border-dashed border-[#95B1EE] rounded-lg bg-[#FFFDF5] transition-all duration-300 hover:border-[#ECE9DF] p-6`}>
+      <div 
+        key={contentKey} // Use contentKey to force re-render when response changes
+        className={`${height} border-2 border-dashed border-[#95B1EE] rounded-lg bg-[#FFFDF5] transition-all duration-300 hover:border-[#ECE9DF] p-6`}
+      >
         {text && <p className="text-[#4A4A4A] text-center px-4 mb-6">{text}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-6">
