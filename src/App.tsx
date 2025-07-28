@@ -172,7 +172,18 @@ function App() {
         }
 
         const data = await response.json();
-        setResponse(data.response);
+        // Extract content after the last "### Respuesta:" marker
+        const fullResponse = data.response;
+        const lastResponderIndex = fullResponse.lastIndexOf("### Respuesta:");
+
+        if (lastResponderIndex !== -1) {
+          // Get content after the last "### Respuesta:" marker
+          const extractedContent = fullResponse.substring(lastResponderIndex + "### Respuesta:".length).trim();
+          setResponse(extractedContent);
+        } else {
+          // If marker not found, use the full response
+          setResponse(fullResponse);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "An unknown error occurred");
       } finally {
