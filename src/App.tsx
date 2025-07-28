@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { ChevronDown, ArrowRight } from 'lucide-react';
 
 function App() {
@@ -49,7 +49,39 @@ function App() {
 
   const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, children, defaultOpen = false }) => {
     const [isOpen, setIsOpen] = useState(defaultOpen);
-    
+    const [contentHeight, setContentHeight] = useState<number>(0);
+    const contentRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      if (isOpen && contentRef.current) {
+        // Set the height to auto initially to get the full height
+        setContentHeight(contentRef.current.scrollHeight);
+
+        // Set up a MutationObserver to watch for changes in the content
+        const observer = new MutationObserver(() => {
+          // When content changes, update the height
+          if (contentRef.current) {
+            setContentHeight(contentRef.current.scrollHeight);
+          }
+        });
+
+        // Start observing the content for changes
+        observer.observe(contentRef.current, {
+          childList: true,      // Watch for changes to child elements
+          subtree: true,        // Watch all descendants, not just direct children
+          characterData: true,  // Watch for changes to text content
+          attributes: true      // Watch for changes to attributes
+        });
+
+        // Clean up the observer when component unmounts or dependencies change
+        return () => {
+          observer.disconnect();
+        };
+      } else {
+        setContentHeight(0);
+      }
+    }, [isOpen, children]); // Re-measure when children change (e.g., when response is loaded)
+
     return (
       <div className="mb-8 bg-white rounded-xl shadow-sm border border-[#95B1EE] overflow-hidden transition-all duration-300 hover:shadow-md">
         <button
@@ -61,8 +93,11 @@ function App() {
             <ChevronDown size={24} className="text-[#ECE9DF]" />
           </div>
         </button>
-        <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
-          <div className="px-8 pb-8">
+        <div 
+          className="transition-all duration-500 ease-in-out overflow-hidden"
+          style={{ maxHeight: `${contentHeight}px`, opacity: isOpen ? 1 : 0 }}
+        >
+          <div className="px-8 pb-8" ref={contentRef}>
             {children}
           </div>
         </div>
@@ -72,14 +107,172 @@ function App() {
 
   interface ContentPlaceholderProps {
     height?: string;
-    text: React.ReactNode;
+    text?: React.ReactNode;
   }
 
-  const ContentPlaceholder: React.FC<ContentPlaceholderProps> = ({ height = "h-32", text }) => (
-    <div className={`${height} flex items-center justify-center border-2 border-dashed border-[#95B1EE] rounded-lg bg-[#FFFDF5] transition-all duration-300 hover:border-[#ECE9DF]`}>
-      <p className="text-[#4A4A4A] text-center px-4">{text}</p>
-    </div>
-  );
+  const ContentPlaceholder: React.FC<ContentPlaceholderProps> = ({ height = "h-auto", text }) => {
+    const [question, setQuestion] = React.useState<string>("");
+    const [profile, setProfile] = React.useState<string>("");
+    const [response, setResponse] = React.useState<string>("");
+    const [loading, setLoading] = React.useState<boolean>(false);
+    const [error, setError] = React.useState<string | null>(null);
+    const [submitted, setSubmitted] = React.useState<boolean>(false);
+    const [contentKey, setContentKey] = React.useState<number>(0); // Used to force re-render
+
+    const profiles = [
+      { id: "cdmx_c-d+_18-25", name: "CDMX Working-class youth (C-D+, 18–25)" },
+      { id: "mty_c+b_35-55", name: "Monterrey Middle-class adults (C+B, 35–55)" }
+    ];
+
+    // Update the content key when response changes to trigger parent recalculation
+    useEffect(() => {
+      if (response) {
+        // Small delay to ensure the DOM has updated with the new content
+        const timer = setTimeout(() => {
+          setContentKey(prevKey => prevKey + 1);
+        }, 100);
+        return () => clearTimeout(timer);
+      }
+    }, [response]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      // Validate form
+      if (!question.trim()) {
+        setError("Please enter a question");
+        return;
+      }
+
+      if (!profile) {
+        setError("Please select a profile");
+        return;
+      }
+
+      setError(null);
+      setLoading(true);
+      setSubmitted(true);
+
+      try {
+        // Make API call
+        const response = await fetch("/ask", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            question,
+            profile,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        setResponse(data.response);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An unknown error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const handleReset = () => {
+      setQuestion("");
+      setProfile("");
+      setResponse("");
+      setError(null);
+      setSubmitted(false);
+    };
+
+    return (
+      <div 
+        key={contentKey} // Use contentKey to force re-render when response changes
+        className={`${height} border-2 border-dashed border-[#95B1EE] rounded-lg bg-[#FFFDF5] transition-all duration-300 hover:border-[#ECE9DF] p-6`}
+      >
+        {text && <p className="text-[#4A4A4A] text-center px-4 mb-6">{text}</p>}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="question" className="block text-sm font-medium text-[#2B3A6B] mb-2">
+              Question
+            </label>
+            <input
+              type="text"
+              id="question"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              placeholder="Enter your question here"
+              className="w-full px-4 py-2 border border-[#95B1EE] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2B3A6B] focus:border-transparent"
+              disabled={loading}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="profile" className="block text-sm font-medium text-[#2B3A6B] mb-2">
+              Profile
+            </label>
+            <select
+              id="profile"
+              value={profile}
+              onChange={(e) => setProfile(e.target.value)}
+              className="w-full px-4 py-2 border border-[#95B1EE] rounded-md focus:outline-none focus:ring-2 focus:ring-[#2B3A6B] focus:border-transparent"
+              disabled={loading}
+            >
+              <option value="">Select a profile</option>
+              {profiles.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex space-x-4">
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-3 bg-[#2B3A6B] text-[#ECE9DF] rounded-lg font-medium transition-all duration-300 hover:bg-[#ECE9DF] hover:text-[#2B3A6B] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#2B3A6B] disabled:hover:text-[#ECE9DF] disabled:hover:scale-100"
+            >
+              {loading ? "Generating..." : "Generate Response"}
+            </button>
+
+            {submitted && (
+              <button
+                type="button"
+                onClick={handleReset}
+                disabled={loading}
+                className="px-6 py-3 bg-[#ECE9DF] text-[#2B3A6B] rounded-lg font-medium transition-all duration-300 hover:bg-[#2B3A6B] hover:text-[#ECE9DF] hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Reset
+              </button>
+            )}
+          </div>
+        </form>
+
+        {error && (
+          <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-red-600">{error}</p>
+          </div>
+        )}
+
+        {loading && (
+          <div className="mt-6 flex justify-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#2B3A6B]"></div>
+          </div>
+        )}
+
+        {response && !loading && (
+          <div className="mt-6 p-6 bg-white border border-[#95B1EE] rounded-md">
+            <h3 className="text-lg font-medium text-[#2B3A6B] mb-2">Response:</h3>
+            <p className="text-[#4A4A4A] whitespace-pre-wrap">{response}</p>
+          </div>
+        )}
+      </div>
+    );
+  };
 
 
 
@@ -163,43 +356,43 @@ function App() {
       <div className="text-center mb-12">
         <h1 className="text-5xl font-bold text-[#2B3A6B] mb-4">The Problem and Why It Matters?</h1>
       </div>
-      
+
       <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
         <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
           <p>
             In contemporary democracies, a <strong>growing disconnection between political elites and ordinary citizens</strong> is reshaping public life. Nowhere is this fracture more evident than in Mexico, where <strong>institutional trust is low</strong> and <strong>political discourse often feels detached from the everyday concerns of voters</strong>. While tools like polls and focus groups remain important, they are often <strong>too slow, too costly, or too limited</strong> to inform fast-moving political contexts. More crucially, they tend to <strong>prioritize measurement over meaning</strong>.
           </p>
-          
+
           <p>
             Many citizens <strong>no longer see themselves reflected in public debates</strong>. They are spoken about, but <strong>rarely listened to</strong>. Political campaigns often rely on <strong>demographic stereotypes</strong> or <strong>simplified messaging strategies</strong>, failing to engage with how people actually think and talk. This is <strong>not just a political crisis. It is a communicative one</strong>.
           </p>
-          
+
           <p>
             In the language of Rittel and Webber (1973), this constitutes a <strong>wicked problem</strong>: one that <strong>resists linear solutions</strong> and evolves with the tools used to address it. In such contexts, <strong>knowledge production must be not only technically sound but also ethically reflexive</strong>. Yet most of the methodologies used in public opinion research <strong>fall short</strong>. <strong>Surveys scale easily but miss nuance</strong>. <strong>Focus groups capture depth</strong>, but are <strong>labor-intensive, time-bound</strong>, and often <strong>disregarded once the fieldwork is over</strong>.
           </p>
-          
+
           <img 
             src="/Capstone-web/TPAWIM01.png" 
             alt="Problem visualization" 
             className="w-full h-auto rounded-lg"
           />
-          
+
           <p>
             One last point is rarely acknowledged: many qualitative agencies accumulate <strong>hundreds of transcripts</strong>, rich in <strong>discourse, emotion, and contradiction</strong>, only to archive them in folders that are <strong>never computationally processed or revisited</strong>. This creates a <strong>massive underused resource</strong> and a <strong>lost opportunity</strong> for <strong>deeper, iterative listening</strong>.
           </p>
-          
+
           <p>
             At the same time, <strong>recent advances in generative AI</strong> have made it possible to <strong>simulate human discourse at scale</strong>. But the promise of these tools has so far been mostly explored with <strong>synthetic prompts or structured survey data</strong>, often <strong>flattening identity into static variables</strong>. Few if any have attempted to <strong>ground these simulations in real qualitative material</strong>, or to <strong>model discourse as something socially situated and affectively charged</strong>.
           </p>
-          
+
           <p>
             This project seeks to <strong>bridge that gap</strong>. What if we could use large language models <strong>not just to generate plausible responses</strong>, but to <strong>simulate the discursive styles of specific population segments</strong> using <strong>real data from focus groups</strong>? What if we could move beyond <strong>demographic placeholders</strong> and train models that speak with the <strong>tone, contradictions, and emotional registers of actual voters</strong>?
           </p>
-          
+
           <p>
             This is <strong>not simply a technical challenge</strong>. It is an <strong>epistemological and political one</strong>. Simulating voter discourse raises important concerns around <strong>bias, representation, and misuse</strong>. But in moments of <strong>urgency such as elections, crises, or civic unrest</strong>, the ability to <strong>listen faster without flattening meaning</strong> could be <strong>transformative</strong>. <strong>Not to replace human research, but to extend its reach</strong>.
           </p>
-          
+
           <p>
             This matters because the <strong>health of a democracy</strong> depends not only on <strong>what is said</strong>, but on <strong>who gets heard and how</strong>. If we can use AI <strong>not to overwrite the public voice but to amplify it</strong>, this project may offer a <strong>new way to build that bridge</strong> between <strong>political systems and the citizens they serve</strong>.
           </p>
@@ -215,21 +408,21 @@ function App() {
       <div className="text-center mb-12">
         <h1 className="text-5xl font-bold text-[#2B3A6B] mb-4">The Proposal</h1>
       </div>
-      
+
       <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
         <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
           <p>
             This project explores whether a <strong>chatbot, trained</strong> not on synthetic personas or survey summaries, but <strong>on actual conversations between real persons,</strong> can simulate politically situated discourse with emotional nuance and demographic specificity.
           </p>
-          
+
           <p>
             Rather than asking a generic model to "sound like a young person" or "respond like a conservative voter," this experiment <strong>uses transcripts from over 300 focus groups</strong> conducted in Mexico between 2023 and 2025. Each session was designed to capture real political reasoning across <strong>region, class, and age</strong>. This qualitative data is then structured and used to fine-tune a language model that later uses <strong>RAG technique</strong> to answer questions.
           </p>
-          
+
           <p>
             The decision to apply <strong>fine-tuning</strong> was driven by the need to capture tone, lexical choices, and discursive style characteristic of each segment. In parallel, <strong>RAG</strong> was implemented to provide the model with <strong>factual grounding</strong> and <strong>richer contextual explanations</strong>, enhancing the reasoning and semantic coherence of its outputs. Each component addressed different aspects of political voice: fine-tuning helped simulate <strong>how people speak</strong>, while RAG helped explain <strong>why they speak that way</strong>.
           </p>
-          
+
           <p>
             The result is not a universal chatbot. It is a <strong>set of segment-specific agents</strong> trained to simulate how different types of voters speak, think, and feel when discussing politics.
           </p>
@@ -242,17 +435,17 @@ function App() {
           <p>
             Several recent projects have explored the simulation of human behavior using large language models. <strong>PersonaBot by Ipsos</strong>, for example, combines survey data and AI to model consumer segments, but offers no public insight into its <strong>data sources</strong>, <strong>validation metrics</strong>, or <strong>applicability to political contexts</strong>.
           </p>
-          
+
           <p>
             Academic work by Argyle et al. (2022) has shown that LLMs can simulate demographic groups based on survey traits, while Park et al. (2024) demonstrated how life-history interviews can inform rich agent simulations. However, most of these efforts rely on <strong>static prompts</strong> or <strong>survey-derived profiles</strong>. They tend to treat identity as a <strong>fixed input</strong> rather than an <strong>emergent, discursive process</strong>.
           </p>
-          
+
           <img 
             src="/Capstone-web/OP01.png" 
             alt="Methodology comparison" 
             className="w-full h-auto rounded-lg"
           />
-          
+
           <p>
             <strong>This project takes a different path.</strong> It builds directly on the <strong>dialogic structure of focus groups</strong>, aiming to preserve <strong>contradiction, affect, and hesitation</strong>. It does not reduce political speech to opinion points. It treats it as a <strong>form of social storytelling</strong>. By combining <strong>fine-tuning</strong>, <strong>retrieval augmentation</strong>, and <strong>qualitative data</strong>, this prototype explores whether large language models can echo the voices of those who are often talked about, but rarely listened to.
           </p>
@@ -268,7 +461,7 @@ function App() {
       <div className="text-center mb-12">
         <h1 className="text-5xl font-bold text-[#2B3A6B] mb-4">How It Was Built?</h1>
       </div>
-      
+
       {builtSubPage === 'main' && (
         <>
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
@@ -289,7 +482,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">1. Qualitative Data Collection and Curation</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setBuiltSubPage('nlp-structuring');
@@ -299,7 +492,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">2. NLP-Based Structuring and Quantification</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setBuiltSubPage('language-modeling');
@@ -309,7 +502,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">3. Language-Based Modeling</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setBuiltSubPage('prompt-structure');
@@ -335,7 +528,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to How It Was Built?
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">1. Qualitative Data Collection and Curation</h2>
             <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
@@ -384,7 +577,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to How It Was Built?
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">2. NLP-Based Structuring and Quantification</h2>
             <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
@@ -445,7 +638,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to How It Was Built?
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">3. Language-Based Modeling</h2>
             <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
@@ -494,7 +687,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to How It Was Built?
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Prompt Structure and Generation Parameters</h2>
             <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
@@ -513,7 +706,7 @@ function App() {
                 <li><strong>Temperature:</strong> 0.4</li>
                 <li><strong>Top-p (nucleus sampling):</strong> 0.8</li>
               </ul>
-              
+
               <p>
                 <strong>Justification:</strong>
               </p>
@@ -569,16 +762,16 @@ function App() {
       <div className="text-center mb-12">
         <h1 className="text-5xl font-bold text-[#2B3A6B] mb-4">The Demo</h1>
       </div>
-      
+
       <CollapsibleSection title="Interactive Demo" defaultOpen={true}>
-        <ContentPlaceholder height="h-64" text="Interactive zone placeholder - Your demo will go here" />
+        <ContentPlaceholder height="h-auto" text="Interactive zone placeholder - Your demo will go here" />
       </CollapsibleSection>
 
       <CollapsibleSection title="Suggested Questions">
         <div className="space-y-4">
-          <ContentPlaceholder height="h-20" text="Suggested question 1 will be added here" />
-          <ContentPlaceholder height="h-20" text="Suggested question 2 will be added here" />
-          <ContentPlaceholder height="h-20" text="Suggested question 3 will be added here" />
+          {/*<ContentPlaceholder height="h-20" text="Suggested question 1 will be added here" />*/}
+          {/*<ContentPlaceholder height="h-20" text="Suggested question 2 will be added here" />*/}
+          {/*<ContentPlaceholder height="h-20" text="Suggested question 3 will be added here" />*/}
         </div>
       </CollapsibleSection>
 
@@ -591,7 +784,7 @@ function App() {
       <div className="text-center mb-12">
         <h1 className="text-5xl font-bold text-[#2B3A6B] mb-4">Results & Validation</h1>
       </div>
-      
+
       {validationSubPage === 'main' && (
         <>
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
@@ -612,7 +805,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">Results: Internal Validation</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setValidationSubPage('external-main');
@@ -622,7 +815,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">Results: External Validation</h3>
             </button>
-            
+
 
           </div>
         </>
@@ -640,37 +833,37 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Results & Validation
           </button>
-          
+
           <div className="bg-white p-8 rounded-lg shadow-md mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6"> Internal Validation: Comparing Generated and Dataset Responses</h2>
             <div className="space-y-4 text-gray-700">
               <p className="text-justify leading-relaxed">
                 To evaluate the model's fidelity to established human reasoning and its capacity to produce coherent discourse, we conducted an internal validation exercise anchored in a quantitative juxtaposition of synthesised and reference responses. The experimental design centred on a quartet of reference questions, comprising a pair already embedded in the training corpus and an equivalent novel pair. The approach thereby permitted an appraisal of both the assimilation of pre-existing discourse and the generation of contextually congruous replies to previously unencountered prompts.
               </p>
-              
+
               <p className="text-justify leading-relaxed">
                 The four benchmark questions were:
               </p>
-              
+
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li className="text-justify">What is your opinion of Claudia Sheinbaum as a presidential candidate?</li>
                 <li className="text-justify">What are the main problems where you live?</li>
                 <li className="text-justify">What do you think about the slogan "We do not live off handouts, we live off effort"?</li>
                 <li className="text-justify">What do you think about the slogan "The people come first, not those at the top"?</li>
               </ol>
-              
+
               <p className="text-justify leading-relaxed">
                 Prompts one and two were directly available in the original corpus and were therefore used to juxtapose model-generated replies with dataset responses. Prompts three and four were newly authored to probe the model's capacity to produce segment-specific viewpoints that are not reducible to direct retrieval.
               </p>
-              
+
               <p className="text-justify leading-relaxed">
                 For each question, we generated 20 responses per profile. In the case of the first two questions, we manually selected 20 dataset responses per profile from the corpus based on thematic relevance. No filtering was done by tone, vocabulary, or semantic quality.
               </p>
-              
+
               <p className="text-justify leading-relaxed">
                 The evaluation focused on three dimensions:
               </p>
-              
+
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li><strong>Sentiment analysis</strong></li>
                 <li><strong>Lexical similarity</strong></li>
@@ -692,7 +885,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">Results - Sentiment Analysis</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setValidationSubPage('internal-lexical');
@@ -702,7 +895,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">Results - Lexical Similarity</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setValidationSubPage('internal-semantic');
@@ -728,7 +921,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Results & Validation
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">External Validation: Interviews with New Participants</h2>
             <div className="text-gray-700 space-y-4 leading-relaxed">
@@ -768,7 +961,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">Results - Sentiment Analysis</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setValidationSubPage('external-lexical');
@@ -778,7 +971,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">Results - Lexical Similarity</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setValidationSubPage('external-semantic');
@@ -804,14 +997,14 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Internal Validation
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Results - Sentiment Analysis</h2>
-          
+
             <div>
-              
+
               <div className="bg-white p-6 rounded-lg shadow-md">
-          
+
                 <div className="text-gray-700 space-y-4">
                   <p className="text-justify leading-relaxed">
                     The sentiment evaluation reveals that the model tends to generate responses that are systematically more negative than those found in the original dataset. In the case of the CDMX 18–25 C-D+ segment, model outputs for Question 1 averaged −0.12, compared to −0.04 in the original data. For Question 2, the difference was even more pronounced, with model responses averaging −0.23 versus −0.11 in the dataset. Despite the seemingly small absolute differences, all three statistical tests (t-test, Wilcoxon, and KS) confirmed that these shifts were significant.
@@ -967,7 +1160,7 @@ function App() {
                   </tbody>
                 </table>
               </div>
-              
+
 
             </div>
             <div className="mt-8">
@@ -989,7 +1182,7 @@ function App() {
                     />
                   </div>
                 </div>
-                
+
                 {/* Segunda fila: IntSent03 e IntSent04 */}
                 <div className="grid grid-cols-2 gap-6">
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
@@ -1007,7 +1200,7 @@ function App() {
                     />
                   </div>
                 </div>
-                
+
                 {/* Tercera fila: IntSent05 e IntSent06 */}
                 <div className="grid grid-cols-2 gap-6">
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
@@ -1056,7 +1249,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Sentiment Analysis
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Results - Lexical Similarity</h2>
             <div className="space-y-8">
@@ -1154,7 +1347,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Lexical Similarity
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Results - Semantic Similarity</h2>
             <div className="space-y-8">
@@ -1252,7 +1445,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to External Validation
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Results - Sentiment Analysis</h2>
             <div className="space-y-8">
@@ -1437,7 +1630,7 @@ function App() {
                       className="w-full h-auto"
                     />
                   </div>
-                  
+
                   {/* Segunda imagen: ExtSent02.png */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
@@ -1478,7 +1671,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Sentiment Analysis
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Results - Lexical Similarity</h2>
             <div className="space-y-8">
@@ -1595,7 +1788,7 @@ function App() {
                       />
                     </div>
                   </div>
-                  
+
                   {/* Segunda imagen: ExtLex03 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
@@ -1604,7 +1797,7 @@ function App() {
                       className="w-full h-auto"
                     />
                   </div>
-                  
+
                   {/* Tercera imagen: ExtLex04 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
@@ -1645,7 +1838,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Lexical Similarity
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Results - Semantic Similarity</h2>
             <div className="space-y-8">
@@ -1762,7 +1955,7 @@ function App() {
                       />
                     </div>
                   </div>
-                  
+
                   {/* Segunda imagen: ExtSem03 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
@@ -1771,7 +1964,7 @@ function App() {
                       className="w-full h-auto"
                     />
                   </div>
-                  
+
                   {/* Tercera imagen: ExtSem04 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
@@ -1801,7 +1994,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Results & Validation
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Learnings</h2>
             <div className="space-y-8">
@@ -1833,7 +2026,7 @@ function App() {
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold text-[#2B3A6B] mb-4">Analysis & Insights</h1>
           </div>
-          
+
           <div className="space-y-6 mb-12">
             <button
               onClick={() => {
@@ -1844,7 +2037,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">Internal Analysis – Sentiment Analysis</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setAnalysisSubPage('internal-lexical');
@@ -1854,7 +2047,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">Internal Analysis - Lexical Similarity</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setAnalysisSubPage('internal-semantic');
@@ -1864,7 +2057,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">Internal Analysis– Semantic Similarity</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setAnalysisSubPage('external-sample-size');
@@ -1874,7 +2067,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">External Analysis – Sample Size Considerations</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setAnalysisSubPage('external-sentiment-consistency');
@@ -1884,7 +2077,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">External Analysis – Sentiment Consistency with Real Interviews</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setAnalysisSubPage('external-lexical-interviews');
@@ -1894,7 +2087,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">External Analysis – Lexical Similarity with Real Interviews</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setAnalysisSubPage('external-semantic-interviews');
@@ -1904,7 +2097,7 @@ function App() {
             >
               <h3 className="text-xl font-bold text-[#2B3A6B]">External Analysis – Semantic Similarity with Real Interviews</h3>
             </button>
-            
+
             <button
               onClick={() => {
                 setAnalysisSubPage('external-qualitative');
@@ -1930,7 +2123,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Analysis & Insights
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Internal Analysis – Sentiment Analysis</h2>
             <div className="space-y-8">
@@ -2031,7 +2224,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Analysis & Insights
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Internal Analysis - Lexical Similarity</h2>
             <div className="space-y-8">
@@ -2129,7 +2322,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Analysis & Insights
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Internal Analysis– Semantic Similarity</h2>
             <div className="space-y-8">
@@ -2227,7 +2420,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Analysis & Insights
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">External Analysis – Sample Size Considerations</h2>
             <div className="space-y-8">
@@ -2284,7 +2477,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Analysis & Insights
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">External Analysis – Sentiment Consistency with Real Interviews</h2>
             <div className="space-y-8">
@@ -2332,7 +2525,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Analysis & Insights
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">External Analysis – Lexical Similarity with Real Interviews</h2>
             <div className="space-y-8">
@@ -2386,7 +2579,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Analysis & Insights
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">External Analysis – Semantic Similarity with Real Interviews</h2>
             <div className="space-y-8">
@@ -2434,7 +2627,7 @@ function App() {
             <ArrowRight size={20} className="transform rotate-180 mr-2" />
             Back to Analysis & Insights
           </button>
-          
+
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">External Analysis – Qualitative evaluation</h2>
             <div className="space-y-8">
@@ -2474,7 +2667,7 @@ function App() {
       <div className="text-center mb-12">
         <h1 className="text-5xl font-bold text-[#2B3A6B] mb-4">Limitations & Ethical Considerations</h1>
       </div>
-      
+
       <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
         <div className="text-gray-700 text-justify space-y-4 leading-relaxed">
           <p>
@@ -2510,7 +2703,7 @@ function App() {
       <div className="text-center mb-12">
         <h1 className="text-5xl font-bold text-[#2B3A6B] mb-4">About the Researcher</h1>
       </div>
-      
+
       <CollapsibleSection title="Biography and Background" defaultOpen={true}>
         <ContentPlaceholder height="h-64" text="Space for researcher biography, background, motivations, and contact information" />
       </CollapsibleSection>
@@ -2524,7 +2717,7 @@ function App() {
       <div className="text-center mb-12">
         <h1 className="text-5xl font-bold text-[#2B3A6B] mb-4">References</h1>
       </div>
-      
+
       <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
         <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Bibliography</h2>
         <div className="text-gray-700 space-y-4 leading-relaxed">
@@ -2573,7 +2766,7 @@ function App() {
       <div className="text-center mb-12">
         <h1 className="text-5xl font-bold text-[#2B3A6B] mb-4">Overall Conclusions</h1>
       </div>
-      
+
       <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
         <div className="text-gray-700 text-justify space-y-6 leading-relaxed">
           <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Overall Conclusions – Key Points</h2>
@@ -2662,7 +2855,7 @@ function App() {
                 <span className="font-semibold">Menu</span>
                 <ChevronDown className={`transform transition-transform duration-300 ${isMenuOpen ? 'rotate-180' : ''} text-[#2B3A6B]`} size={20} />
               </button>
-              
+
               {isMenuOpen && (
                 <div className="absolute top-full left-0 mt-3 w-72 bg-white rounded-2xl shadow-xl border border-[#95B1EE] z-50 overflow-hidden">
                   <button
@@ -2698,7 +2891,7 @@ function App() {
                 </div>
               )}
             </div>
-            
+
             <button
               onClick={() => setCurrentPage('home')}
               className="text-2xl font-bold text-[#ECE9DF] transition-colors duration-200 hover:text-[#F5F3F0]"
