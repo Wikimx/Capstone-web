@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import { ChevronDown, ArrowRight } from 'lucide-react';
+import emailjs from 'emailjs-com';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -317,14 +318,14 @@ function App() {
       <div className="relative bg-[#2B3A6B] text-[#ECE9DF] rounded-3xl p-12 mb-16 overflow-hidden">
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <h1 className="text-5xl font-bold mb-6 text-[#ECE9DF]">
-            Rethinking how we listen to voters
+            Rethinking how we listen to population segments
           </h1>
           <p className="text-2xl mb-10 text-[#E7F1A8] max-w-2xl mx-auto leading-relaxed font-serif italic">
             Real people. Real data. Simulated voices.
           </p>
           <div className="text-base mb-10 text-[#ECE9DF] max-w-3xl mx-auto leading-relaxed space-y-4 text-justify">
             <p>
-              This project explores how large language models, trained with real qualitative data, can simulate the voices of voters from different regions and social groups in Mexico.
+              This project explores how large language models, trained with real qualitative data, can simulate the voice of the people from different regions and social groups in Mexico.
             </p>
             <p>
               By combining anthropology, political communication, and AI, we aim to prototype new ways of listening. Not as a replacement for traditional research, but as a tool to expand its reach in urgent, high-stakes contexts.
@@ -657,6 +658,24 @@ function App() {
               <p>
                 Having fine-tuned the model and implemented RAG for contextual grounding, the next step was to define how questions would be posed and how responses would be generated. This involved specifying the <strong>structure of the prompts</strong> and calibrating <strong>generation parameters</strong> to maximize realism, coherence, and variation across simulated outputs.
               </p>
+              
+              {/* Visual representation of the modeling approach */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
+                  <img 
+                    src="/Capstone-web/Fine Tuning.png" 
+                    alt="Fine Tuning Process Visualization" 
+                    className="w-full h-auto"
+                  />
+                </div>
+                <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
+                  <img 
+                    src="/Capstone-web/RAG.png" 
+                    alt="RAG (Retrieval-Augmented Generation) Process Visualization" 
+                    className="w-full h-auto"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -757,10 +776,181 @@ function App() {
     </div>
   );
 
-  const renderDemoPage = () => (
-    <div className="max-w-5xl mx-auto">
-      <div className="text-center mb-12">
-        <h1 className="text-5xl font-bold text-[#2B3A6B] mb-4">The Demo</h1>
+  const renderDemoPage = () => {
+    const [demoFormData, setDemoFormData] = useState({
+      preferredDate: '',
+      preferredTime: '',
+      message: ''
+    });
+    const [demoFormStatus, setDemoFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [demoFormMessage, setDemoFormMessage] = useState('');
+
+    const handleDemoFormSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setDemoFormStatus('loading');
+      setDemoFormMessage('');
+
+      try {
+        // Initialize EmailJS with your credentials
+        emailjs.init("la-h937LHBTaJ0do2");
+
+        // Prepare the email template parameters
+        const templateParams = {
+          to_email: 'wikimx@gmail.com, j.garcialunaperez@lis.ac.uk, joaquin@captaestudios.com',
+          preferred_date: demoFormData.preferredDate,
+          preferred_time: demoFormData.preferredTime,
+          additional_message: demoFormData.message || 'No additional message provided',
+          submitted_on: new Date().toLocaleString(),
+          from_name: 'Anonymous User',
+          from_email: 'anonymous@demo-request.com'
+        };
+
+        // Send email using EmailJS
+        await emailjs.send(
+          'service_1s7ypgs',
+          'template_4on0p3n',
+          templateParams
+        );
+        
+        setDemoFormStatus('success');
+        setDemoFormMessage('Request submitted successfully! Your anonymous request has been sent.');
+        
+        // Reset form
+        setDemoFormData({
+          preferredDate: '',
+          preferredTime: '',
+          message: ''
+        });
+
+      } catch (error) {
+        console.error('EmailJS Error:', error);
+        setDemoFormStatus('error');
+        setDemoFormMessage('Failed to submit request. Please try again.');
+      }
+    };
+
+    const handleDemoFormChange = (field: string, value: string) => {
+      setDemoFormData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    };
+
+    return (
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-[#2B3A6B] mb-4">The Demo</h1>
+        </div>
+
+      <CollapsibleSection title="Schedule Demo Access" defaultOpen={true}>
+        <div className="space-y-6">
+          <div className="text-[#4A4A4A] text-justify leading-relaxed">
+            <p className="mb-4">
+              To access the live demo, please send me an anonymous message with your preferred date and time. <strong>Requests must be submitted at least 48 hours in advance.</strong> The models are only active during scheduled windows due to resource limitations.
+            </p>
+          </div>
+          
+          <form onSubmit={handleDemoFormSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="preferredDate" className="block text-sm font-medium text-[#2B3A6B] mb-2">
+                Preferred Date *
+              </label>
+              <input
+                type="date"
+                id="preferredDate"
+                name="preferredDate"
+                value={demoFormData.preferredDate}
+                onChange={(e) => handleDemoFormChange('preferredDate', e.target.value)}
+                required
+                className="w-full px-4 py-2 border border-[#95B1EE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2B3A6B] focus:border-transparent"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="preferredTime" className="block text-sm font-medium text-[#2B3A6B] mb-2">
+                Preferred Time *
+              </label>
+              <input
+                type="time"
+                id="preferredTime"
+                name="preferredTime"
+                value={demoFormData.preferredTime}
+                onChange={(e) => handleDemoFormChange('preferredTime', e.target.value)}
+                required
+                className="w-full px-4 py-2 border border-[#95B1EE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2B3A6B] focus:border-transparent"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="message" className="block text-sm font-medium text-[#2B3A6B] mb-2">
+                Additional Message (Optional)
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                value={demoFormData.message}
+                onChange={(e) => handleDemoFormChange('message', e.target.value)}
+                rows={4}
+                placeholder="Any additional information or questions..."
+                className="w-full px-4 py-2 border border-[#95B1EE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2B3A6B] focus:border-transparent resize-vertical"
+              />
+            </div>
+            
+            {demoFormMessage && (
+              <div className={`p-3 rounded-lg text-sm ${
+                demoFormStatus === 'success' 
+                  ? 'bg-green-100 text-green-800 border border-green-200' 
+                  : 'bg-red-100 text-red-800 border border-red-200'
+              }`}>
+                {demoFormMessage}
+              </div>
+            )}
+            
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                disabled={demoFormStatus === 'loading'}
+                className="px-6 py-3 bg-[#2B3A6B] text-[#ECE9DF] font-semibold rounded-lg hover:bg-[#1E2A4A] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#2B3A6B] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {demoFormStatus === 'loading' ? 'Sending...' : 'Send Message'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setDemoFormData({
+                    preferredDate: '',
+                    preferredTime: '',
+                    message: ''
+                  });
+                  setDemoFormStatus('idle');
+                  setDemoFormMessage('');
+                }}
+                className="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              >
+                Clear Form
+              </button>
+            </div>
+          </form>
+          
+          <div className="text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">
+            <p className="font-medium text-[#2B3A6B] mb-2">Note:</p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>This is an anonymous form - no personal information is collected</li>
+              <li>Demo sessions typically last 15-30 minutes</li>
+            </ul>
+          </div>
+        </div>
+      </CollapsibleSection>
+
+      <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
+        <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
+          <p>
+            You are invited to try the <strong>live demo</strong> and interact directly with <strong>two simulated voter profiles</strong>. Ask any political question. Both models will respond side by side, in <strong>Spanish and English</strong>.
+          </p>
+          <p>
+            No login is needed. However, please send me an anonymous message indicating the <strong>date and time</strong> you plan to access it, since the models are only active during <strong>scheduled windows</strong> due to <strong>resource limitations</strong>. Use the demo to explore how <strong>different segments sound</strong> when reacting to politics.
+          </p>
+        </div>
       </div>
 
       <CollapsibleSection title="Interactive Demo" defaultOpen={true}>
@@ -778,6 +968,7 @@ function App() {
       <NavigationButtons />
     </div>
   );
+  };
 
   const renderValidationPage = () => (
     <div className="max-w-5xl mx-auto">
@@ -835,14 +1026,14 @@ function App() {
           </button>
 
           <div className="bg-white p-8 rounded-lg shadow-md mb-8">
-            <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6"> Internal Validation: Comparing Generated and Dataset Responses</h2>
+            <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Internal Validation: Comparing Generated and Dataset Responses</h2>
             <div className="space-y-4 text-gray-700">
               <p className="text-justify leading-relaxed">
-                To evaluate the model's fidelity to established human reasoning and its capacity to produce coherent discourse, we conducted an internal validation exercise anchored in a quantitative juxtaposition of synthesised and reference responses. The experimental design centred on a quartet of reference questions, comprising a pair already embedded in the training corpus and an equivalent novel pair. The approach thereby permitted an appraisal of both the assimilation of pre-existing discourse and the generation of contextually congruous replies to previously unencountered prompts.
+                To evaluate the model's fidelity to established human reasoning and its capacity to produce coherent discourse, we conducted an internal validation exercise anchored in a quantitative juxtaposition of synthesised and reference responses. <strong>The experimental design centred on four reference questions,</strong> comprising a pair already embedded in the training corpus and an equivalent novel pair. The approach thereby permitted an appraisal of both the assimilation of pre-existing discourse and the generation of contextually congruous replies to previously unencountered prompts.
               </p>
 
               <p className="text-justify leading-relaxed">
-                The four benchmark questions were:
+                The <strong>four benchmark questions</strong> were:
               </p>
 
               <ol className="list-decimal list-inside space-y-2 ml-4">
@@ -853,11 +1044,11 @@ function App() {
               </ol>
 
               <p className="text-justify leading-relaxed">
-                Prompts one and two were directly available in the original corpus and were therefore used to juxtapose model-generated replies with dataset responses. Prompts three and four were newly authored to probe the model's capacity to produce segment-specific viewpoints that are not reducible to direct retrieval.
+                Prompts <strong>one and two were directly available in the original corpus</strong> and were therefore used to juxtapose model-generated replies with dataset responses. Prompts <strong>three and four were newly authored to probe the model's capacity to produce segment-specific</strong> viewpoints that are not reducible to direct retrieval.
               </p>
 
               <p className="text-justify leading-relaxed">
-                For each question, we generated 20 responses per profile. In the case of the first two questions, we manually selected 20 dataset responses per profile from the corpus based on thematic relevance. No filtering was done by tone, vocabulary, or semantic quality.
+                For each question, we generated <strong>20 responses per profile.</strong> In the case of the first two questions, we manually selected 20 dataset responses per profile from the corpus based on thematic relevance. No filtering was done by tone, vocabulary, or semantic quality.
               </p>
 
               <p className="text-justify leading-relaxed">
@@ -926,7 +1117,7 @@ function App() {
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">External Validation: Interviews with New Participants</h2>
             <div className="text-gray-700 space-y-4 leading-relaxed">
               <p className="text-justify">
-                As a second layer of evaluation, eight semi-structured interviews with new participants were conducted. Each of the two segments (CDMX, C-D+, 18–25 and MTY, C+B, 35–55) was represented by four participants. The same four benchmark questions used in the internal validation were applied again to allow for direct comparison.
+                As a second layer of evaluation, eight semi-structured interviews with new participants were conducted. <strong>Each of the two segments (CDMX, C-D+, 18–25 and MTY, C+B, 35–55) was represented by four participants. The same four benchmark questions used in the internal validation were applied again to allow for direct comparison.</strong>
               </p>
               <p className="text-justify">
                 For this validation, we used the same three quantitative metrics:
@@ -937,16 +1128,16 @@ function App() {
                 <li><strong>Semantic similarity</strong></li>
               </ul>
               <p className="text-justify">
-                Each metric was subject to different statistical tests as in the internal evaluation.
+                <strong>Each metric was subject to different statistical tests as in the internal evaluation.</strong>
               </p>
               <p className="text-justify">
-                In addition to the automated comparisons, a qualitative evaluation was carried out to assess the credibility of the model-generated responses. Each answer was rated on a scale from 1 to 10, based on how convincingly it resembled the real responses obtained during interviews with participants from the same demographic segment.
+                In addition to the automated comparisons, a qualitative evaluation was carried out to assess the credibility of the model-generated responses. <strong>Each answer was rated on a scale from 1 to 10, based on how convincingly it resembled the real responses obtained during interviews with participants from the same demographic segment.</strong>
               </p>
               <p className="text-justify">
-                This scoring was grounded primarily in a direct comparison between generated and real interview answers, but also drew on my professional experience conducting and analyzing over 2,000 political focus groups in Mexico. The evaluation criteria included tonal authenticity, vocabulary alignment, argumentative structure, and the degree to which each response reflected the social perspective and communicative style of the corresponding group.
+                This scoring was grounded primarily in a direct comparison between generated and real interview answers, but also drew on my professional experience conducting and analyzing over 2,000 political focus groups in Mexico. <strong>The evaluation criteria included tonal authenticity, vocabulary alignment, argumentative structure, and the degree to which each response reflected the social perspective and communicative style of the corresponding group.</strong>
               </p>
               <p className="text-justify">
-                This layer of validation complements the computational metrics by addressing a different question: not whether the text is statistically similar, but whether it feels real and contextually plausible to someone familiar with how these voters actually speak and reason.
+                This layer of validation complements the computational metrics by addressing a different question: <strong>not whether the text is statistically similar, but whether it feels real and contextually plausible to someone familiar with how these voters actually speak and reason</strong>
               </p>
             </div>
           </div>
@@ -999,29 +1190,27 @@ function App() {
           </button>
 
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
-            <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Results - Sentiment Analysis</h2>
+            <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Results: Sentiment Analysis</h2>
 
-            <div>
-
-              <div className="bg-white p-6 rounded-lg shadow-md">
-
-                <div className="text-gray-700 space-y-4">
-                  <p className="text-justify leading-relaxed">
-                    The sentiment evaluation reveals that the model tends to generate responses that are systematically more negative than those found in the original dataset. In the case of the CDMX 18–25 C-D+ segment, model outputs for Question 1 averaged −0.12, compared to −0.04 in the original data. For Question 2, the difference was even more pronounced, with model responses averaging −0.23 versus −0.11 in the dataset. Despite the seemingly small absolute differences, all three statistical tests (t-test, Wilcoxon, and KS) confirmed that these shifts were significant.
-                  </p>
-                  <p className="text-justify leading-relaxed">
-                    This tendency toward negative sentiment persists even when comparing model outputs to the overall training corpus. In other words, the model does not merely reflect localized pessimism from specific prompts; it introduces a broader affective distortion that skews more negative than the original data distribution.
-                  </p>
-                  <p className="text-justify leading-relaxed">
-                    Rather than amplifying sentiment already present in the corpus, the model appears to introduce a systematic affective drift. This could stem from fine-tuning artifacts, overfitting on emotionally charged examples, or a structural imbalance in how emotionally neutral versus critical responses were represented during training.
-                  </p>
-                  <p className="text-justify leading-relaxed">
-                    These findings raise important questions about the model's ability to replicate not just what participants say, but how they say it. Political discourse often relies on subtle affective cues like tones of irony, resignation, hope, or indignation that are not always captured by raw sentiment polarity. The model's tendency to skew more negative may reduce the credibility or authenticity of simulated responses, particularly in contexts where emotional nuance matters.
-                  </p>
-                  <p className="text-justify leading-relaxed">
-                    In sum, while the model succeeds in producing linguistically coherent answers, its affective calibration remains imperfect. A more refined tuning process or additional constraints may be necessary to ensure that sentiment generation aligns more closely with the emotional patterns observed in real political discourse.
-                  </p>
-                </div>
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="text-gray-700 space-y-4">
+                <p className="text-justify leading-relaxed">
+                  To gauge the emotional tone of the responses we applied sentiment analysis, revealing the affective undercurrents of the political discourse. Each utterance, originating from either the focus group dataset or the generated set, was evaluated with the pretrained classifier <strong>"cardiffnlp/twitter-roberta-base-sentiment,"</strong> a transformer model tailored for informal benchmarks and celebrated for its sensitivity to affect. The classifier yields a polarity score ranging from −1 for strong negativity to +1 for strong positivity, determined by lexical indicators, syntactic configurations, and recognized emotional sequences.
+                </p>
+                <p className="text-justify leading-relaxed">
+                  This technique was applied to the two principal benchmark questions retained from the original focus group corpus. Within each voter segment, we calculated the <strong>mean sentiment</strong> of the dataset responses and contrasted them with the corresponding mean from the model-produced answers prompted by the same question. In addition to these mean values, we probed the <strong>entire distribution of sentiment scores</strong>, thereby illuminating variations in emotional tone that might have been concealed by average values alone.
+                </p>
+                <p className="text-justify leading-relaxed">
+                  To evaluate statistically whether the model retained the affective profile of the original data, we employed a triad of complementary significance tests:
+                </p>
+                <ul className="list-disc list-inside space-y-2 ml-4">
+                  <li><strong>t-test</strong>: Tested for differences in means assuming normal distribution.</li>
+                  <li><strong>Wilcoxon signed-rank test</strong>: A non-parametric alternative that does not assume normality, appropriate given the small sample size and potential skew.</li>
+                  <li><strong>Kolmogorov–Smirnov (KS) test</strong>: Compared the shape and spread of the two distributions to detect broader divergence in emotional patterns.</li>
+                </ul>
+                <p className="text-justify leading-relaxed">
+                  Using multiple tests allowed for a robust evaluation under different statistical assumptions. This was critical because emotional tone in political discourse often varies not just in intensity, but in consistency and distribution across speakers. The goal was to determine whether <strong>the model replicated not only the general sentiment polarity, but the emotional diversity and balance typical of each segment's political expression.</strong>
+                </p>
               </div>
             </div>
                    <div>
@@ -1251,21 +1440,21 @@ function App() {
           </button>
 
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
-            <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Results - Lexical Similarity</h2>
+            <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Results: Lexical Similarity</h2>
             <div className="space-y-8">
               <div>
                 <div className="text-gray-700 text-justify space-y-4 leading-relaxed">
                   <p>
-                    The lexical evaluation reveals that the model achieves moderate to high alignment with the vocabulary used by participants in the original dataset. In the case of CDMX 18–25 C-D+ responses, cosine similarity between generated and dataset answers was 0.75 for Question 1, but dropped to 0.47 for Question 2. While the first result suggests successful reproduction of lexical style, the second indicates difficulty aligning with the discourse used around everyday local problems, a topic present in the training data but expressed with wide stylistic variation. Mann–Whitney tests showed that the difference in similarity scores for Question 2 was statistically significant, reinforcing this interpretation.
+                    Lexical similarity gauges the extent to which two corpora employ overlapping vocabulary. We quantified overlap with <strong>cosine similarity</strong>, a standard measure in computational linguistics that assesses the cosine of the angle between two term-frequency vectors embedded in a high-dimensional space. Each text was vectorized via <strong>CountVectorizer</strong>, producing integer-frequency matrices normalized by document length. The resulting cosine score ranges from 0 to 1; a score of 1 indicates perfect lexical overlap, while 0 signifies complete lexical independence.
                   </p>
                   <p>
-                    When compared against the full corpus of focus group responses from the same demographic segment, lexical similarity remained consistently high across all questions, with values above 0.80 for most prompts. This suggests that the model internalized general vocabulary patterns typical of each group, even when facing new or synthetic prompts. Notably, CDMX Question 2 again showed a lower similarity to the broader corpus (0.53), indicating that this topic was harder to generalize lexically.
+                    For this evaluation, cosine similarity served to measure how closely the model-generated replies correspond to the responses found in the reference dataset, examined along two dimensions:
                   </p>
                   <p>
-                    In contrast, the MTY 35–55 C+B model exhibited more stable results across questions, though some variation remained. Question 4, an experimental slogan not present in the original dataset, produced significantly different similarity scores compared to the corpus baseline, suggesting the model's lexical flexibility has limits under novel ideological inputs.
+                    <strong>Model vs. Dataset Answers</strong>: For the two first benchmark questions extracted directly from the original corpus, cosine similarity was calculated between the generated answers and dataset responses from the corresponding focus group segment. A <strong>Mann–Whitney U test</strong> was applied to determine whether the distribution of these similarity scores differed significantly, indicating lexical divergence or alignment.
                   </p>
                   <p>
-                    These findings suggest that while the model performs well in reproducing the lexical field of each segment, especially on familiar topics, it may deviate under less-structured or more contextually loaded questions. The combination of targeted and corpus-wide comparisons supports the conclusion that lexical coherence is preserved overall, but can falter at the boundaries of the training distribution.
+                    <strong>Model vs. Full Corpus</strong>: For all four questions (including experimental prompts not present in the original data), cosine similarity was also calculated against a broader corpus of responses from the same profile, regardless of the specific question. This comparison provided a more general sense of whether the model's vocabulary usage aligned with the lexical patterns typical of that demographic segment. Again, a <strong>Mann–Whitney U test</strong> was used to assess whether the distributions differed in a statistically significant way. By combining targeted and corpus-wide comparisons, this evaluation tested both the specificity and generalizability of the model's lexical output within each profile.
                   </p>
                 </div>
               </div>
@@ -1349,21 +1538,21 @@ function App() {
           </button>
 
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
-            <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Results - Semantic Similarity</h2>
+            <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">3. Semantic Similarity</h2>
             <div className="space-y-8">
               <div>
                 <div className="space-y-4 text-gray-700 leading-relaxed">
                   <p className="text-justify">
-                    Semantic similarity scores between model-generated responses and dataset answers show moderate alignment across both profiles. In the CDMX 18–25 C-D+ segment, similarity averaged 0.48 for Question 1 and 0.56 for Question 2. In the MTY 35–55 C+B segment, values ranged from 0.34 (Q1) to 0.51 (Q2). These scores indicate that the model captures a reasonable portion of the underlying meaning expressed by participants, even if it does not fully replicate their discursive structure.
+                    While lexical similarity focuses on exact word overlap, semantic similarity evaluates whether two texts convey similar meanings, even if they use different vocabulary. To measure this, we used <strong>sentence embeddings</strong>, which transform entire sentences into dense numerical vectors in a semantic space. These embeddings were generated using a pretrained transformer model (<strong>paraphrase-MiniLM-L6-v2 from SentenceTransformers</strong>), which captures nuances in phrasing, structure, and implied meaning.
                   </p>
                   <p className="text-justify">
-                    Importantly, no significant differences were found in the distribution of similarity scores for any question-profile pair. Mann–Whitney U tests yielded p-values above the 0.05 threshold in all cases, suggesting that the model's answers are semantically comparable in structure and conceptual content to real responses within each segment. While the scores are not high enough to indicate near-perfect alignment, they confirm that the model is not hallucinating content or diverging meaningfully in logic or topic.
+                    Having mapped sentences to vectors, we quantified semantic proximity by calculating <strong>cosine similarity</strong> between embeddings of model-generated responses and those from the source dataset. A high cosine similarity score, in this case, signals that the model's output shares the same <strong>conceptual trajectory</strong> and <strong>argumentative structure</strong> as the benchmark, even when the lexical items differ.
                   </p>
                   <p className="text-justify">
-                    The model performs slightly better on Question 2 across both segments, which may reflect the nature of the prompt. That question addressed local problems, a topic that tends to elicit more focused and structured responses, thus making it easier for the model to match intent and argumentative framing.
+                    The comparative analysis confined itself to the two benchmark questions embedded in the training corpus. For every participant profile and question, we derived <strong>cosine similarity</strong> between model-generated answers and focus group responses from the relevant corpus segment. To ascertain whether the model's responses were semantically nearer to or more distant from the dataset, we employed the <strong>Mann–Whitney U test</strong> on the resulting similarity scores.
                   </p>
                   <p className="text-justify">
-                    Overall, the semantic evaluation suggests that while the model does not mirror participant reasoning verbatim, it produces responses that fall within the expected conceptual space for each demographic. This supports its potential as a tool for simulating plausible political discourse, with the caveat that deeper nuance and framing variation may still require improvement.
+                    This statistical procedure enabled us to ascertain whether the model had absorbed and reproduced the <strong>segment-specific discursive logic</strong>, <strong>reasoning architectures</strong>, and <strong>conceptual framings</strong> that transcend mere surface paraphrase.
                   </p>
                 </div>
               </div>
@@ -2130,19 +2319,19 @@ function App() {
               <div>
                 <div className="text-gray-700 text-justify space-y-4 leading-relaxed">
                   <p>
-                    The sentiment evaluation reveals that the model tends to generate responses that are systematically more negative than those found in the original dataset. In the case of the CDMX 18–25 C-D+ segment, model outputs for Question 1 averaged −0.12, compared to −0.04 in the original data. For Question 2, the difference was even more pronounced, with model responses averaging −0.23 versus −0.11 in the dataset. Despite the seemingly small absolute differences, all three statistical tests (t-test, Wilcoxon, and KS) confirmed that these shifts were significant.
+                    The sentiment evaluation reveals that the model tends to generate responses that are systematically more negative than those found in the original dataset. <strong>In the case of the CDMX 18–25 C-D+ segment, model outputs for Question 1 averaged −0.12, compared to −0.04 in the original data. For Question 2, the difference was even more pronounced, with model responses averaging −0.23 versus −0.11 in the dataset.</strong> Despite the seemingly small absolute differences, <strong>all three statistical tests (t-test, Wilcoxon, and KS) confirmed that these shifts were significant.</strong>
                   </p>
                   <p>
-                    This tendency toward negative sentiment persists even when comparing model outputs to the overall training corpus. In other words, the model does not merely reflect localized pessimism from specific prompts; it introduces a broader affective distortion that skews more negative than the original data distribution.
+                    <strong>This tendency toward negative sentiment persists even when comparing model outputs to the overall training corpus.</strong> In other words, the model does not merely reflect localized pessimism from specific prompts; it introduces a broader affective distortion that skews more negative than the original data distribution.
                   </p>
                   <p>
-                    Rather than amplifying sentiment already present in the corpus, the model appears to introduce a systematic affective drift. This could stem from fine-tuning artifacts, overfitting on emotionally charged examples, or a structural imbalance in how emotionally neutral versus critical responses were represented during training.
+                    Rather than amplifying sentiment already present in the corpus, <strong>the model appears to introduce a systematic affective drift.</strong> This could stem from fine-tuning artifacts, overfitting on emotionally charged examples, or a structural imbalance in how emotionally neutral versus critical responses were represented during training.
                   </p>
                   <p>
-                    These findings raise important questions about the model's ability to replicate not just what participants say, but how they say it. Political discourse often relies on subtle affective cues like tones of irony, resignation, hope, or indignation that are not always captured by raw sentiment polarity. The model's tendency to skew more negative may reduce the credibility or authenticity of simulated responses, particularly in contexts where emotional nuance matters.
+                    These findings raise important questions about the model's ability to replicate not just what participants say, but how they say it. <strong>Political discourse often relies on subtle affective cues like tones of irony, resignation, hope, or indignation that are not always captured by raw sentiment polarity.</strong> The model's tendency to skew more negative may reduce the credibility or authenticity of simulated responses, particularly in contexts where emotional nuance matters.
                   </p>
                   <p>
-                    In sum, while the model succeeds in producing linguistically coherent answers, its affective calibration remains imperfect. A more refined tuning process or additional constraints may be necessary to ensure that sentiment generation aligns more closely with the emotional patterns observed in real political discourse.
+                    In sum, while the model succeeds in producing linguistically coherent answers, its affective calibration remains imperfect. <strong>A more refined tuning process or additional constraints may be necessary to ensure that sentiment generation aligns more closely with the emotional patterns observed in real political discourse.</strong>
                   </p>
                 </div>
               </div>
@@ -2231,16 +2420,16 @@ function App() {
               <div>
                 <div className="text-gray-700 text-justify space-y-4 leading-relaxed">
                   <p>
-                    The lexical evaluation reveals that the model achieves moderate to high alignment with the vocabulary used by participants in the original dataset. In the case of CDMX 18–25 C-D+ responses, cosine similarity between generated and dataset answers was 0.75 for Question 1, but dropped to 0.47 for Question 2. While the first result suggests successful reproduction of lexical style, the second indicates difficulty aligning with the discourse used around everyday local problems, a topic present in the training data but expressed with wide stylistic variation. Mann–Whitney tests showed that the difference in similarity scores for Question 2 was statistically significant, reinforcing this interpretation.
+                    La evaluación léxica revela que <strong>el modelo logra una alineación moderada a alta con el vocabulario utilizado por los participantes en el conjunto de datos original.</strong> En el caso de las respuestas CDMX 18–25 C-D+, la similitud coseno entre las respuestas generadas y las del conjunto de datos fue de 0.75 para la Pregunta 1, pero <strong>disminuyó a 0.47 para la Pregunta 2</strong>. Mientras que el primer resultado sugiere una reproducción exitosa del estilo léxico, el segundo <strong>indica dificultad para alinearse con el discurso utilizado en torno a problemas locales cotidianos</strong>, un tema presente en los datos de entrenamiento pero expresado con una amplia variación estilística. Las pruebas de Mann–Whitney mostraron que <strong>la diferencia en las puntuaciones de similitud para la Pregunta 2 fue estadísticamente significativa</strong>, lo que refuerza esta interpretación.
                   </p>
                   <p>
-                    When compared against the full corpus of focus group responses from the same demographic segment, lexical similarity remained consistently high across all questions, with values above 0.80 for most prompts. This suggests that the model internalized general vocabulary patterns typical of each group, even when facing new or synthetic prompts. Notably, CDMX Question 2 again showed a lower similarity to the broader corpus (0.53), indicating that this topic was harder to generalize lexically.
+                    Cuando se comparó con el corpus completo de respuestas de grupos focales del mismo segmento demográfico, <strong>la similitud léxica se mantuvo consistentemente alta en todas las preguntas, con valores superiores a 0.80 para la mayoría de las indicaciones</strong>. Esto sugiere que <strong>el modelo internalizó patrones de vocabulario generales típicos de cada grupo</strong>, incluso al enfrentarse a indicaciones nuevas o sintéticas. Notablemente, <strong>la Pregunta 2 de CDMX volvió a mostrar una similitud menor con el corpus más amplio (0.53)</strong>, lo que indica que este tema fue más difícil de generalizar léxicamente.
                   </p>
                   <p>
-                    In contrast, the MTY 35–55 C+B model exhibited more stable results across questions, though some variation remained. Question 4, an experimental slogan not present in the original dataset, produced significantly different similarity scores compared to the corpus baseline, suggesting the model's lexical flexibility has limits under novel ideological inputs.
+                    En contraste, <strong>el modelo MTY 35–55 C+B exhibió resultados más estables en todas las preguntas</strong>, aunque persistió cierta variación. La Pregunta 4, un eslogan experimental no presente en el conjunto de datos original, <strong>produjo puntuaciones de similitud significativamente diferentes en comparación con la línea base del corpus</strong>, lo que sugiere que la flexibilidad léxica del modelo tiene límites bajo nuevas entradas ideológicas.
                   </p>
                   <p>
-                    These findings suggest that while the model performs well in reproducing the lexical field of each segment, especially on familiar topics, it may deviate under less-structured or more contextually loaded questions. The combination of targeted and corpus-wide comparisons supports the conclusion that lexical coherence is preserved overall, but can falter at the boundaries of the training distribution.
+                    Estos hallazgos sugieren que, si bien <strong>el modelo funciona bien al reproducir el campo léxico de cada segmento, especialmente en temas familiares, puede desviarse en preguntas menos estructuradas o más cargadas contextualmente.</strong> La combinación de comparaciones dirigidas y de todo el corpus apoya la conclusión de que <strong>la coherencia léxica se conserva en general, pero puede fallar en los límites de la distribución de entrenamiento.</strong>
                   </p>
                 </div>
               </div>
@@ -2329,16 +2518,16 @@ function App() {
               <div>
                 <div className="text-gray-700 text-justify space-y-4 leading-relaxed">
                   <p>
-                    Semantic similarity scores between model-generated responses and dataset answers show moderate alignment across both profiles. In the CDMX 18–25 C-D+ segment, similarity averaged 0.48 for Question 1 and 0.56 for Question 2. In the MTY 35–55 C+B segment, values ranged from 0.34 (Q1) to 0.51 (Q2). These scores indicate that the model captures a reasonable portion of the underlying meaning expressed by participants, even if it does not fully replicate their discursive structure.
+                    Semantic similarity scores between model-generated responses and dataset answers show <strong>moderate alignment</strong> across both profiles. In the CDMX 18–25 C-D+ segment, similarity averaged <strong>0.48 for Question 1 and 0.56 for Question 2</strong>. In the MTY 35–55 C+B segment, values ranged from <strong>0.34 (Q1) to 0.51 (Q2)</strong>. These scores indicate that the <strong>model captures a reasonable portion of the underlying meaning</strong> expressed by participants, even if it does not fully replicate their discursive structure.
                   </p>
                   <p>
-                    Importantly, no significant differences were found in the distribution of similarity scores for any question-profile pair. Mann–Whitney U tests yielded p-values above the 0.05 threshold in all cases, suggesting that the model's answers are semantically comparable in structure and conceptual content to real responses within each segment. While the scores are not high enough to indicate near-perfect alignment, they confirm that the model is not hallucinating content or diverging meaningfully in logic or topic.
+                    Importantly, <strong>no significant differences were found in the distribution of similarity scores</strong> for any question-profile pair. Mann–Whitney U tests yielded p-values above the 0.05 threshold in all cases, suggesting that the <strong>model's answers are semantically comparable in structure and conceptual content to real responses within each segment</strong>. While the scores are not high enough to indicate near-perfect alignment, they <strong>confirm that the model is not hallucinating content or diverging meaningfully in logic or topic.</strong>
                   </p>
                   <p>
-                    The model performs slightly better on Question 2 across both segments, which may reflect the nature of the prompt. That question addressed local problems, a topic that tends to elicit more focused and structured responses, thus making it easier for the model to match intent and argumentative framing.
+                    The <strong>model performs slightly better on Question 2</strong> across both segments, which may reflect the nature of the prompt. That question addressed local problems, a topic that tends to elicit more focused and structured responses, thus making it easier for the model to match intent and argumentative framing.
                   </p>
                   <p>
-                    Overall, the semantic evaluation suggests that while the model does not mirror participant reasoning verbatim, it produces responses that fall within the expected conceptual space for each demographic. This supports its potential as a tool for simulating plausible political discourse, with the caveat that deeper nuance and framing variation may still require improvement.
+                    Overall, the semantic evaluation suggests that while the <strong>model does not mirror participant reasoning verbatim, it produces responses that fall within the expected conceptual space for each demographic</strong>. This <strong>supports its potential as a tool for simulating plausible political discourse</strong>, with the caveat that deeper nuance and framing variation may still require improvement.
                   </p>
                 </div>
               </div>
@@ -2427,22 +2616,22 @@ function App() {
               <div>
                 <div className="text-gray-700 text-justify space-y-4 leading-relaxed">
                   <p>
-                    The external evaluation involved eight interviews, four per profile, with each participant answering all four benchmark questions. This yielded four real responses per profile-question pair, which were then compared against the 20 model-generated responses for the same question and segment. All statistical tests, t-tests, Wilcoxon, and Kolmogorov–Smirnov, were conducted independently for each question-profile pair, never pooling responses across questions or segments.
+                    The external evaluation involved eight interviews, four per profile, with each participant answering all four benchmark questions. This yielded four real responses per profile-question pair, which were then compared against the 20 model-generated responses for the same question and segment. All statistical tests, t-tests, Wilcoxon, and Kolmogorov–Smirnov, were conducted independently for each question-profile pair, <strong>never pooling responses across questions or segments</strong>.
                   </p>
                   <p>
-                    Although this configuration seems to allow statistical comparison, the structure comes with some key restrictions that must be noted:
+                    Although this configuration seems to allow statistical comparison, the structure comes with some <strong>key restrictions that must be noted</strong>:
                   </p>
                   <p>
-                    <strong>The sample size imbalance:</strong> is prominent with the model output serving as the benchmark as each responds only four responses in comparison to twenty model outputs. This imbalance significantly impacts the sensitivity of the tests being conducted and in turn the estimates of variance in models that include humans become highly unreliable.
+                    <strong>The sample size imbalance</strong> is prominent with the model output serving as the benchmark as each responds only four responses in comparison to twenty model outputs. This imbalance <strong>significantly impacts the sensitivity of the tests</strong> being conducted and in turn the <strong>estimates of variance in models that include humans become highly unreliable</strong>.
                   </p>
                   <p>
-                    <strong>Low statistical power:</strong> When the real sample is small, the average can be greatly affected. The restrictions put in place by non-parametric tests is a helpful tool, however, the curt structure remains a problem regardless.
+                    <strong>Low statistical power:</strong> When the real sample is small, the average can be greatly affected. The restrictions put in place by non parametric tests is a helpful tool, however, the curt structure remains a problem regardless.
                   </p>
                   <p>
-                    <strong>Caution in interpretation:</strong> Non-significant results do not confirm equivalence; they may reflect low power rather than true similarity.
+                    <strong>Caution in interpretation:</strong> <strong>Non-significant results do not confirm equivalence</strong>; they may reflect low power rather than true similarity.
                   </p>
                   <p>
-                    These tests serve the purpose of being directional breaks as opposed to being precise benchmarks with set validation scope. The main purpose of these tests is to establish the plausibility of models.
+                    These tests serve the purpose of being <strong>directional breaks as opposed to being precise benchmarks with set validation scope</strong>. The main purpose of these tests is to <strong>establish the plausibility of models</strong>.
                   </p>
                 </div>
               </div>
@@ -2484,13 +2673,13 @@ function App() {
               <div>
                 <div className="text-gray-700 text-justify space-y-4 leading-relaxed">
                   <p>
-                    The external assessments mirror the internal review in observing that the model leans toward negativity more than interviewees. Only two of the eight stitched comparisons, however, achieved threshold significance (CDMX Question 2, p = 0.025; MTY Question 2, p = 0.009), both of which the t-test confirmed. Repeated Wilcoxon and KS evaluation, however, did not uphold these hits, drawing attention to the analysis's low statistical leverage from the small sample.
+                    The external assessments mirror the internal review in observing that the <strong>model leans toward negativity more than interviewees</strong>. Only two of the eight stitched comparisons, however, achieved threshold significance (CDMX Question 2, p = 0.025; MTY Question 2, p = 0.009), both of which the t-test confirmed. Repeated Wilcoxon and KS evaluation, however, did not uphold these hits, drawing attention to the <strong>analysis's low statistical leverage from the small sample</strong>.
                   </p>
                   <p>
-                    The small number of real responses (n = 4 per group) restricts the robustness of the analysis. These comparisons should be read as plausibility checks, not conclusive validation. Still, the repeated significance of Question 2 across segments suggests that the model may be particularly prone to amplifying negative sentiment when prompted with problems tied to local realities.
+                    The small number of real responses (n = 4 per group) restricts the robustness of the analysis. These comparisons should be read as <strong>plausibility checks, not conclusive validation</strong>. Still, the repeated significance of Question 2 across segments suggests that the <strong>model may be particularly prone to amplifying negative sentiment when prompted with problems tied to local realities</strong>.
                   </p>
                   <p>
-                    Overall, the alignment of sentiment seems achievable, yet the model repeatedly follows a negativity path. Upcoming work might need to focus on affect-sensitive tuning to be more accurate trying to mirror an emotional equilibrium found in conversations.
+                    Overall, the alignment of sentiment seems achievable, yet the <strong>model repeatedly follows a negativity path</strong>. Upcoming work might need to focus on affect-sensitive tuning to be more accurate trying to mirror an emotional equilibrium found in conversations.
                   </p>
                 </div>
               </div>
@@ -2532,19 +2721,19 @@ function App() {
               <div>
                 <div className="text-gray-700 text-justify space-y-4 leading-relaxed">
                   <p>
-                    To evaluate how effectively the model approximates the lexical repertoire and stylistic nuances of actual respondents, we calculated cosine similarity between model-generated replies and interview transcripts for every question and participant profile. Each contrast employed identical prompts and was analyzed through Mann–Whitney U tests.
+                    To evaluate how effectively the model approximates the lexical repertoire and stylistic nuances of actual respondents, we calculated cosine similarity between model-generated replies and interview transcripts for every question and participant profile.Each contrast employed identical prompts and was analyzed through Mann–Whitney U tests.
                   </p>
                   <p>
-                    Seven out of eight comparisons showed statistically significant differences (p &lt; 0.05), indicating that the model's vocabulary often diverges from that of real speakers. This was true for both profiles and across all question types, including open-ended prompts (e.g., slogans) and evaluative ones (e.g., perceptions of López Obrador or local problems).
+                    <strong>Seven out of eight comparisons showed statistically significant differences</strong> (p &lt; 0.05), indicating that the <strong>model's vocabulary often diverges from that of real speakers</strong>. This was true for both profiles and across all question types, including open-ended prompts (e.g., slogans) and evaluative ones (e.g., perceptions of López Obrador or local problems).
                   </p>
                   <p>
-                    In the CDMX segment, Questions 1 (0.66) and 4 (0.67) showed the highest similarity scores, suggesting stronger lexical alignment when evaluating political figures and slogans. In contrast, Question 2 (0.35) had the lowest score, pointing to greater difficulty reproducing the way participants talk about concrete local problems.
+                    In the CDMX segment, Questions 1 (0.66) and 4 (0.67) showed the <strong>highest similarity scores, suggesting stronger lexical alignment</strong> when evaluating political figures and slogans. In contrast, Question 2 (0.35) had the <strong>lowest score, pointing to greater difficulty reproducing the way participants talk about concrete local problems</strong>.
                   </p>
                   <p>
-                    The MTY dataset fell short of the CDMX scores, with majority similarities below 0.50. Questions 1 (0.43) and 3 (0.44) displayed pronounced lexical divergence, while Question 4 climbed to 0.56, the lone prompt in the segment to avoid significant divergence.
+                    The MTY dataset fell short of the CDMX scores, with majority similarities below 0.50. Questions 1 (0.43) and 3 (0.44) displayed <strong>pronounced lexical divergence</strong>, while Question 4 climbed to 0.56, the lone prompt in the segment to avoid significant divergence.
                   </p>
                   <p>
-                    These results suggest that lexical alignment is generally moderate but systematically different from human responses. The model may rely on recurring patterns or overgeneralized expressions not present in the specific style or vocabulary used by real participants. Because these discrepancies are reproducible, raising lexical accuracy will likely demand focused adjustment using a broader, more colloquial corpus or the application of filtering rules to recalibrate specific word selections.
+                    These results suggest that lexical alignment is generally moderate but <strong>systematically different from human responses</strong>. The model may rely on recurring patterns or overgeneralized expressions not present in the specific style or vocabulary used by real participants. Because these discrepancies are reproducible, raising lexical accuracy will likely demand focused adjustment using a broader, more colloquial corpus or the application of filtering rules to recalibrate specific word selections.
                   </p>
                 </div>
               </div>
@@ -2586,13 +2775,13 @@ function App() {
               <div>
                 <div className="text-gray-700 text-justify space-y-4 leading-relaxed">
                   <p>
-                    In the CDMX segment, three out of four comparisons yielded statistical differences, with Questions 1 (0.48), 3 (0.62), and 4 (0.40) demonstrating moderate to quasi strong semantic association. Question 2, however, with the lowest similarity of 0.16, was not significant (p = 0.0958) suggesting both weak alignment and a high degree of variation in actual responses.
+                    In the CDMX segment, <strong>three out of four comparisons yielded statistical differences</strong>, with Questions 1 (0.48), 3 (0.62), and 4 (0.40) demonstrating moderate to quasi strong semantic association. Question 2, however, with the lowest similarity of 0.16, was not significant (p = 0.0958) suggesting both <strong>weak alignment and a high degree of variation in actual responses</strong>.
                   </p>
                   <p>
-                    In the MTY segment, the MTY similarity semantic differences were lower in all questions. Only Question 4 (0.25) had a significant difference. For questions 1 to 3, their similarity scores clustered in the low to moderate range (0.10 to 0.35), suggesting a lack of independence among the responses, which in all likelihood represents a homogeneous response set among the few interview responses instead of actual alignment.
+                    In the MTY segment, the MTY similarity semantic differences were lower in all questions. Only Question 4 (0.25) had a significant difference. For questions 1 to 3, their similarity scores clustered in the low to moderate range (0.10 to 0.35), suggesting a <strong>lack of independence among the responses, which in all likelihood represents a homogeneous response set among the few interview responses instead of actual alignment</strong>.
                   </p>
                   <p>
-                    These findings suggest the model performs adequately in capturing semantic meaning in the CDMX segment, particularly in Questions 1 and 3, but performs consistently weak in MTY. This could suggest semantic regional patterns are poorly represented in the model's training data. Strengthening alignment may not result solely from fine-tuning, but require additional targeted exposure to local reasoning and contextual frameworks.
+                    These findings suggest the <strong>model performs adequately in capturing semantic meaning in the CDMX segment</strong>, particularly in Questions 1 and 3, but performs <strong>consistently weak in MTY</strong>. This could suggest <strong>semantic regional patterns are poorly represented in the model's training data</strong>. Strengthening alignment may not result solely from fine-tuning, but require additional targeted exposure to local reasoning and contextual frameworks.
                   </p>
                 </div>
               </div>
@@ -2634,19 +2823,19 @@ function App() {
               <div>
                 <div className="text-gray-700 text-justify space-y-4 leading-relaxed">
                   <p>
-                    In evaluating the qualitative performance of the models designed to simulate differentiated socioeconomic profiles (CDMX_C-D+_18–25 and MTY_C+B_35–55), a principal tension emerges between fidelity to the targeted discursive intent and fluctuations in technical coherence. Mean scores for individual prompts hover between 5 and 6 on a 10-point scale; yet we classify the models' aggregate performance as superior, yielding a simulation capacity that convincingly approximates the segment's tone, ideological slant, and hierarchical selection of issues.
+                    In evaluating the qualitative performance of the models designed to simulate differentiated socioeconomic profiles (<strong>CDMX_C-D+_18–25</strong> and <strong>MTY_C+B_35–55</strong>), a principal tension emerges between <strong>fidelity to the targeted discursive intent</strong> and <strong>fluctuations in technical coherence</strong>. Mean scores for individual prompts hover between 5 and 6 on a 10-point scale; yet we classify the models' aggregate performance as superior, yielding a simulation capacity that convincingly approximates the segment's <strong>tone, ideological slant, and hierarchical selection of issues</strong>.
                   </p>
                   <p>
-                    In the case of the CDMX_C-D+_18–25 model, a clear ability was observed to replicate youth and working-class speech patterns: use of conversational markers ("pues yo siento que…"), emotional ambivalence, and a positive valuation of state support. These features aligned with what the original corpus showed as discursive traits of the segment. However, multiple responses displayed serious formal flaws, such as automatic repetitions, loss of coherence, or syntactic loops. These limitations reduced the individual score of many answers, but they do not negate the fact that the model successfully incorporated key elements of the group's discursive positioning.
+                    In the case of the <strong>CDMX_C-D+_18–25 model</strong>, a clear ability was observed to replicate <strong>youth and working-class speech patterns</strong>: use of conversational markers (<strong>"pues yo siento que…"</strong>), <strong>emotional ambivalence</strong>, and a <strong>positive valuation of state support</strong>. These features aligned with what the original corpus showed as discursive traits of the segment. However, multiple responses displayed serious formal flaws, such as automatic repetitions, loss of coherence, or syntactic loops. These limitations reduced the individual score of many answers, but they do not negate the fact that the model successfully incorporated key elements of the group's discursive positioning.
                   </p>
                   <p>
-                    The MTY_C+B_35–55 model, on the other hand, presented a more structured discourse, oriented toward technical analysis of the topics. A critical stance toward assistentialism and populism was regularly observed, along with a positive view of concepts such as merit, individual effort, and institutional transparency. These responses, aligned with a technocratic and rational ethos, reinforce the model's credibility in simulating a socioeconomic profile associated with classic liberal and conservative values. Again, despite the presence of erratic or repetitive outputs, the model maintained an ideological and discursive coherence that outweighs its occasional generation flaws.
+                    The <strong>MTY_C+B_35–55 model</strong>, on the other hand, presented a more <strong>structured discourse, oriented toward technical analysis of the topics</strong>. A <strong>critical stance toward assistentialism and populism</strong> was regularly observed, along with a <strong>positive view of concepts such as merit, individual effort, and institutional transparency</strong>. These responses, aligned with a technocratic and rational ethos, reinforce the model's credibility in simulating a socioeconomic profile associated with classic liberal and conservative values. Again, despite the presence of erratic or repetitive outputs, the model maintained an <strong>ideological and discursive coherence</strong> that outweighs its occasional generation flaws.
                   </p>
                   <p>
-                    This disparity between moderate individual scores and a more favorable overall evaluation is explained by the non-linear nature of the applied scale. In text generation contexts, a "regular" response (5 or 6) may be sufficient for the model to be useful in exploratory or strategic simulation scenarios. Moreover, when these responses accumulate with thematic coherence and tonal fidelity, the model acquires an aggregate functionality that exceeds the limitations of each fragment.
+                    This disparity between moderate individual scores and a more favorable overall evaluation is explained by the <strong>non-linear nature of the applied scale</strong>. In text generation contexts, a <strong>"regular" response (5 or 6) may be sufficient</strong> for the model to be useful in exploratory or strategic simulation scenarios. Moreover, when these responses accumulate with thematic coherence and tonal fidelity, the model acquires an <strong>aggregate functionality that exceeds the limitations of each fragment</strong>.
                   </p>
                   <p>
-                    This finding strongly suggests that judges of generative models operating from qualitative premises cannot permit themselves to be seduced by numerical precision alone. Attempts to gauge alignment between output and intended target must engage the discursive contours and normative commitments of the groups being simulated. When assessed across the relevant segmental differentiations, the models examined here reveal sufficient distinction to be conceived as legitimate qualitative probes, particularly in the domain of political theory where the articulation of contexts, contingencies, and normative orientations remains paramount.
+                    This finding strongly suggests that judges of generative models operating from qualitative premises cannot permit themselves to be seduced by numerical precision alone. Attempts to gauge alignment between output and intended target must engage the <strong>discursive contours and normative commitments</strong> of the groups being simulated. When assessed across the relevant segmental differentiations, the models examined here reveal sufficient distinction to be conceived as <strong>legitimate qualitative probes</strong>, particularly in the domain of political theory where the articulation of contexts, contingencies, and normative orientations remains paramount.
                   </p>
                 </div>
               </div>
@@ -2671,25 +2860,71 @@ function App() {
       <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
         <div className="text-gray-700 text-justify space-y-4 leading-relaxed">
           <p>
-            In any research context, ethics play an essential role in framing the outcomes and results. Therefore, in the case of the given prototype its usefulness needs to be approached from an ethical and methodological perspective. In other words, it is worth highlighting its risks and potential in order to avoid misuse in the future.
+            In any research context, ethics play an essential role in framing the outcomes and results. Therefore, in the case of the given prototype its usefulness needs to be approached from an <strong>ethical and methodological perspective</strong>. In other words, it is worth highlighting its <strong>risks and potential</strong> in order to avoid misuse in the future.
           </p>
           <p>
             <strong>Epistemological and technical limitations.</strong><br />
-            The results of the model in no case reflect the truthful opinions of individuals, moreover, it is important to state that its outputs are just simulations of probabilities. Simulations can be improved through real qualitative data, but it also brings up such challenges as generalization errors, overfitting, and token bias. Another important thing is that the model was evaluated internally and externally and it was noted that its predictive capabilities were limited. Therefore, it is reasonable to assume that some of its outputs can be biased and amplified depending on the original input thus warranting further analysis.
+            The results of the model in no case reflect the <strong>truthful opinions of individuals</strong>, moreover, it is important to state that its outputs are just <strong>simulations of probabilities</strong>. Simulations can be improved through real qualitative data, but it also brings up such challenges as generalization errors, overfitting, and token bias. Another important thing is that the model was evaluated internally and externally and it was noted that its <strong>predictive capabilities were limited</strong>. Therefore, it is reasonable to assume that some of its outputs can be <strong>biased and amplified</strong> depending on the original input thus warranting further analysis.
           </p>
           <p>
             <strong>Risks of overtrust and misapplication.</strong><br />
-            Because of the fluency and coherence of LLM generated text, there is the possibility that users misjudge the accuracy of model outputs. Without human oversight, these simulations should not be misused as empirical evidence, simulations, and model outputs should not be used to justify strategic decisions. Their purpose is not to provide incontrovertible evidence; simulations are used only as relatively plausible illustrations, and their credibility depends on the judgment of expert interpreters who possess relevant knowledge and are sufficiently well-versed with the simulations.
+            Because of the <strong>fluency and coherence of LLM generated text</strong>, there is the possibility that users misjudge the <strong>accuracy of model outputs</strong>. Without human oversight, these simulations should not be misused as empirical evidence, simulations, and model outputs should not be used to justify strategic decisions. Their purpose is not to provide incontrovertible evidence; simulations are used only as <strong>relatively plausible illustrations</strong>, and their credibility depends on the judgment of <strong>expert interpreters</strong> who possess relevant knowledge and are sufficiently well-versed with the simulations.
           </p>
           <p>
             <strong>Limits of human nuance and dialogic depth.</strong><br />
-            Unlike qualitative fieldwork in-person interviews, which trained moderators can evaluate with irony, tone, and body language, simulated interactions remain text-bound and context-poor. Human facilitators can build rapport, which allows them to earn the trust of participants and encourage more candid, emotive, and resonant responses. Moreover, the flow of real conversations allows moderators to pursue certain lines of reasoning and deepen them with follow-up questions and emergent probes. In contrast, language models respond to inputs as an amalgamation of branching possibilities based across several threads of discourse, often lacking coherent continuity within the response.
+            Unlike qualitative fieldwork in-person interviews, which trained moderators can evaluate with irony, tone, and body language, <strong>simulated interactions remain text-bound and context-poor</strong>. Human facilitators can build rapport, which allows them to earn the trust of participants and encourage more candid, emotive, and resonant responses. Moreover, the flow of real conversations allows moderators to pursue certain lines of reasoning and deepen them with follow-up questions and emergent probes. In contrast, language models respond to inputs as an <strong>amalgamation of branching possibilities</strong> based across several threads of discourse, often lacking coherent continuity within the response.
           </p>
           <p>
-            <strong>Avoiding stereotypical representations.</strong> A common concern when simulating demographic segments is the risk of reinforcing stereotypes or essentializing group identities. This critique is valid and must be taken seriously. Any system that claims to "speak like" a population group runs the risk of reducing complex subjectivities to simplified caricatures. This project, however, actively resists that tendency by grounding its simulations in the actual voices of real participants captured in more than 300 focus group transcripts. Instead of using synthetic profiles or aggregated traits, the models are exposed to the contradictions, hesitations, and even the ambivalences that define real political speech. Far from producing homogeneous or flattened outputs, the models display a wide expressive range, even within the same segment, mirroring the internal diversity of real groups. This is not only a technical outcome but a methodological choice.Rather than imposing externally predefined archetypes on a demographic label, the model takes in the multitude of viewpoints from within the group itself. In reflecting this, the model captures a discursive rather than essentialist logic of identity, where political subjectivity is always situated, relational, and in flux.
+            <strong>Avoiding stereotypical representations.</strong> A common concern when simulating demographic segments is the risk of <strong>reinforcing stereotypes or essentializing group identities</strong>. This critique is valid and must be taken seriously. Any system that claims to <strong>"speak like" a population group</strong> runs the risk of reducing complex subjectivities to simplified caricatures. This project, however, actively resists that tendency by grounding its simulations in the <strong>actual voices of real participants</strong> captured in more than 300 focus group transcripts. Instead of using synthetic profiles or aggregated traits, the models are exposed to the <strong>contradictions, hesitations, and even the ambivalences that define real political speech</strong>. Far from producing homogeneous or flattened outputs, the models display a <strong>wide expressive range</strong>, even within the same segment, mirroring the internal diversity of real groups. This is not only a technical outcome but a methodological choice.Rather than imposing externally predefined archetypes on a demographic label, the model takes in the <strong>multitude of viewpoints from within the group itself</strong>. In reflecting this, the model captures a <strong>discursive rather than essentialist logic of identity</strong>, where political subjectivity is always situated, relational, and in flux.
           </p>
           <p>
-            In sum, the promise of language-based voter simulations lies not in replacing human research, but in augmenting its reach under strict methodological and ethical constraints.
+            In sum, the promise of language-based voter simulations lies not in replacing human research, but in <strong>augmenting its reach under strict methodological and ethical constraints</strong>.
+          </p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
+        <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Overall Conclusions – Key Points</h2>
+        <div className="text-gray-700 text-justify space-y-4 leading-relaxed">
+          <p>
+            Expecting a <strong>fine-tuned model</strong> trained on real political conversations to produce clear, precise, and consistent responses may be a <strong>contradiction in itself</strong>. Human discourse, especially in focus groups, is rarely linear or coherent. It is shaped by <strong>hesitation</strong>, <strong>emotional ambivalence</strong>, and the coexistence of <strong>contradictory beliefs</strong>. This project does not aim to extract a single "correct" answer from a simulated respondent, but rather to approximate the <strong>richness and complexity of collective discourse</strong>. When used with the interpretive guidance of a researcher familiar with the target segments, these models can provide <strong>valuable insight</strong>, not because each response is flawless, but because the ensemble reflects <strong>recognizable tones</strong>, <strong>tensions</strong>, and <strong>ideological tendencies</strong>. The following conclusions are drawn with this framework in mind: the models are not perfect mirrors of human reasoning, but they do succeed in capturing enough of its <strong>structure and subjectivity</strong> to be considered <strong>plausible</strong>, <strong>strategically useful</strong>, and <strong>worthy of further development</strong>.
+          </p>
+          
+          <ul className="list-disc list-inside space-y-4 ml-4">
+            <li>
+              <strong>Discursive fidelity by segment</strong><br />
+              Both models successfully captured the ideological tone and expressive style of their target segments. The CDMX model reflects youthful, ambivalent, and colloquial speech patterns, while the MTY model exhibits structured, analytical discourse with an emphasis on effort, merit, and skepticism toward populism.
+            </li>
+            
+            <li>
+              <strong>Consistent affective bias</strong><br />
+              The models exhibited a consistent inclination to produce more negative outputs than the actual participants in both internal and external sentiment analyses. This points to an amplification in the kinds of critical responses the models have learned to generate.
+            </li>
+            
+            <li>
+              <strong>Lexical appropriation with limits</strong><br />
+              The model successfully simulates the lexical skills of participants in each segment. It also demonstrates the use of filler words, characteristic phrases, word repetition, and linguistic inconsistencies. However, there is room for improvement in Lexical Similarity to higher levels.
+            </li>
+            
+            <li>
+              <strong>Moderate semantic plausibility</strong><br />
+              Semantic similarity scores showed that while the models did not perfectly mirror participant reasoning, they remained within the expected conceptual space. This reinforces their potential for generating plausible interpretations of political discourse without hallucinating or deviating from core topics.
+            </li>
+            
+            <li>
+              <strong>Exploratory value despite formal flaws</strong><br />
+              While individual responses may be imperfect or mechanically flawed, the models achieve functional realism in aggregate. Their outputs are ideologically consistent, contextually grounded, and discursively differentiated enough to serve as tools for message testing and hypothesis exploration.
+            </li>
+            
+            <li>
+              <strong>Validation supports cautious use</strong><br />
+              Even with the collected data, both quantitative and qualitative tests were conducted to verify that the model's responses were plausible based on the simulated segments. We found glaring errors that make critical human oversight and validation of the model's responses impossible without them.
+            </li>
+          </ul>
+          
+          <p>
+            <strong>Limitations of RAG and future architectural considerations</strong><br />
+            While Retrieval-Augmented Generation (RAG) was initially implemented to enhance factual grounding, it often constrained the model's expressive capacity. Due to Salamandra's relatively small context window, limiting input to only the top four retrieved blocks meant sacrificing the broader discursive richness available in the corpus. In many cases, the fine-tuned model alone produced more contextually coherent and stylistically aligned responses. For future iterations, I intend to explore architectures with extended context windows, where the entire corpus can be accessed via cache-based retrieval (CAG) instead of fragmentary RAG. This may offer a more integrated and expressive basis for generating answers that reflect the full depth of the underlying qualitative data.
           </p>
         </div>
       </div>
@@ -2920,3 +3155,4 @@ function App() {
 }
 
 export default App;
+
