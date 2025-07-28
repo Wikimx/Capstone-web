@@ -265,7 +265,7 @@ function App() {
         )}
 
         {response && !loading && (
-          <div className="mt-6 p-6 bg-white border border-[#95B1EE] rounded-md">
+          <div className="mt-6 p-6 bg-white border border-[#95B1EE] rounded-md break-words">
             <h3 className="text-lg font-medium text-[#2B3A6B] mb-2">Response:</h3>
             <p className="text-[#4A4A4A] whitespace-pre-wrap">{response}</p>
           </div>
