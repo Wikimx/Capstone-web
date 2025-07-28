@@ -167,41 +167,41 @@ function App() {
       <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
         <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
           <p>
-            In contemporary democracies, a growing disconnection between political elites and ordinary citizens is reshaping public life. Nowhere is this fracture more evident than in Mexico, where institutional trust is low and political discourse often feels detached from the everyday concerns of voters. While tools like polls and focus groups remain important, they are often too slow, too costly, or too limited to inform fast-moving political contexts. More crucially, they tend to prioritize measurement over meaning.
+            In contemporary democracies, a <strong>growing disconnection between political elites and ordinary citizens</strong> is reshaping public life. Nowhere is this fracture more evident than in Mexico, where <strong>institutional trust is low</strong> and <strong>political discourse often feels detached from the everyday concerns of voters</strong>. While tools like polls and focus groups remain important, they are often <strong>too slow, too costly, or too limited</strong> to inform fast-moving political contexts. More crucially, they tend to <strong>prioritize measurement over meaning</strong>.
           </p>
           
           <p>
-            Many citizens no longer see themselves reflected in public debates. They are spoken about, but rarely listened to. Political campaigns often rely on demographic stereotypes or simplified messaging strategies, failing to engage with how people actually think and talk. This is not just a political crisis. It is a communicative one.
+            Many citizens <strong>no longer see themselves reflected in public debates</strong>. They are spoken about, but <strong>rarely listened to</strong>. Political campaigns often rely on <strong>demographic stereotypes</strong> or <strong>simplified messaging strategies</strong>, failing to engage with how people actually think and talk. This is <strong>not just a political crisis. It is a communicative one</strong>.
           </p>
           
           <p>
-            In the language of Rittel and Webber (1973), this constitutes a <em>wicked problem:</em> one that resists linear solutions and evolves with the tools used to address it. In such contexts, knowledge production must be not only technically sound but also ethically reflexive. Yet most of the methodologies used in public opinion research fall short. Surveys scale easily but miss nuance. Focus groups capture depth, but are labor-intensive, time-bound, and often disregarded once the fieldwork is over.
+            In the language of Rittel and Webber (1973), this constitutes a <strong>wicked problem</strong>: one that <strong>resists linear solutions</strong> and evolves with the tools used to address it. In such contexts, <strong>knowledge production must be not only technically sound but also ethically reflexive</strong>. Yet most of the methodologies used in public opinion research <strong>fall short</strong>. <strong>Surveys scale easily but miss nuance</strong>. <strong>Focus groups capture depth</strong>, but are <strong>labor-intensive, time-bound</strong>, and often <strong>disregarded once the fieldwork is over</strong>.
           </p>
           
           <img 
-            src="/TPAWIM01.png" 
+            src="/Capstone-web/TPAWIM01.png" 
             alt="Problem visualization" 
             className="w-full h-auto rounded-lg"
           />
           
           <p>
-            One last point is rarely acknowledged: many qualitative agencies accumulate hundreds of transcripts, rich in discourse, emotion, and contradiction, only to archive them in folders that are never computationally processed or revisited. This creates a massive underused resource and a lost opportunity for deeper, iterative listening.
+            One last point is rarely acknowledged: many qualitative agencies accumulate <strong>hundreds of transcripts</strong>, rich in <strong>discourse, emotion, and contradiction</strong>, only to archive them in folders that are <strong>never computationally processed or revisited</strong>. This creates a <strong>massive underused resource</strong> and a <strong>lost opportunity</strong> for <strong>deeper, iterative listening</strong>.
           </p>
           
           <p>
-            At the same time, recent advances in generative AI have made it possible to simulate human discourse at scale. But the promise of these tools has so far been mostly explored with synthetic prompts or structured survey data, often flattening identity into static variables. Few if any have attempted to ground these simulations in real qualitative material, or to model discourse as something socially situated and affectively charged.
+            At the same time, <strong>recent advances in generative AI</strong> have made it possible to <strong>simulate human discourse at scale</strong>. But the promise of these tools has so far been mostly explored with <strong>synthetic prompts or structured survey data</strong>, often <strong>flattening identity into static variables</strong>. Few if any have attempted to <strong>ground these simulations in real qualitative material</strong>, or to <strong>model discourse as something socially situated and affectively charged</strong>.
           </p>
           
           <p>
-            This project seeks to bridge that gap. What if we could use large language models not just to generate plausible responses, but to simulate the discursive styles of specific population segments using real data from focus groups? What if we could move beyond demographic placeholders and train models that speak with the tone, contradictions, and emotional registers of actual voters?
+            This project seeks to <strong>bridge that gap</strong>. What if we could use large language models <strong>not just to generate plausible responses</strong>, but to <strong>simulate the discursive styles of specific population segments</strong> using <strong>real data from focus groups</strong>? What if we could move beyond <strong>demographic placeholders</strong> and train models that speak with the <strong>tone, contradictions, and emotional registers of actual voters</strong>?
           </p>
           
           <p>
-            This is not simply a technical challenge. It is an epistemological and political one. Simulating voter discourse raises important concerns around bias, representation, and misuse. But in moments of urgency such as elections, crises, or civic unrest, the ability to listen faster without flattening meaning could be transformative. Not to replace human research, but to extend its reach.
+            This is <strong>not simply a technical challenge</strong>. It is an <strong>epistemological and political one</strong>. Simulating voter discourse raises important concerns around <strong>bias, representation, and misuse</strong>. But in moments of <strong>urgency such as elections, crises, or civic unrest</strong>, the ability to <strong>listen faster without flattening meaning</strong> could be <strong>transformative</strong>. <strong>Not to replace human research, but to extend its reach</strong>.
           </p>
           
           <p>
-            This matters because the health of a democracy depends not only on what is said, but on who gets heard and how. If we can use AI not to overwrite public voice but to amplify it, this project may offer a new way to build that bridge between political systems and the citizens they serve.
+            This matters because the <strong>health of a democracy</strong> depends not only on <strong>what is said</strong>, but on <strong>who gets heard and how</strong>. If we can use AI <strong>not to overwrite the public voice but to amplify it</strong>, this project may offer a <strong>new way to build that bridge</strong> between <strong>political systems and the citizens they serve</strong>.
           </p>
         </div>
       </div>
@@ -219,19 +219,19 @@ function App() {
       <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
         <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
           <p>
-            This project explores whether a chatbot, trained not on synthetic personas or survey summaries, but on actual conversations between real voters, can simulate politically situated discourse with emotional nuance and demographic specificity.
+            This project explores whether a <strong>chatbot, trained</strong> not on synthetic personas or survey summaries, but <strong>on actual conversations between real persons,</strong> can simulate politically situated discourse with emotional nuance and demographic specificity.
           </p>
           
           <p>
-            Rather than asking a generic model to "sound like a young person" or "respond like a conservative voter," this experiment uses transcripts from over 300 focus groups conducted in Mexico between 2023 and 2025. Each session was designed to capture real political reasoning across region, class, and age. This qualitative data is then structured and used to fine-tune a language model that later uses RAG technique to answer questions.
+            Rather than asking a generic model to "sound like a young person" or "respond like a conservative voter," this experiment <strong>uses transcripts from over 300 focus groups</strong> conducted in Mexico between 2023 and 2025. Each session was designed to capture real political reasoning across <strong>region, class, and age</strong>. This qualitative data is then structured and used to fine-tune a language model that later uses <strong>RAG technique</strong> to answer questions.
           </p>
           
           <p>
-            The decision to apply fine-tuning was driven by the need to capture tone, lexical choices, and discursive style characteristic of each segment. In parallel, RAG was implemented to provide the model with factual grounding and richer contextual explanations, enhancing the reasoning and semantic coherence of its outputs. Each component addressed different aspects of political voice: fine-tuning helped simulate how people speak, while RAG helped explain why they speak that way.
+            The decision to apply <strong>fine-tuning</strong> was driven by the need to capture tone, lexical choices, and discursive style characteristic of each segment. In parallel, <strong>RAG</strong> was implemented to provide the model with <strong>factual grounding</strong> and <strong>richer contextual explanations</strong>, enhancing the reasoning and semantic coherence of its outputs. Each component addressed different aspects of political voice: fine-tuning helped simulate <strong>how people speak</strong>, while RAG helped explain <strong>why they speak that way</strong>.
           </p>
           
           <p>
-            The result is not a universal chatbot. It is a set of segment-specific agents trained to simulate how different types of voters speak, think, and feel when discussing politics.
+            The result is not a universal chatbot. It is a <strong>set of segment-specific agents</strong> trained to simulate how different types of voters speak, think, and feel when discussing politics.
           </p>
         </div>
       </div>
@@ -240,25 +240,21 @@ function App() {
         <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">How is this different from existing approaches?</h2>
         <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
           <p>
-            Several recent projects have explored the simulation of human behavior using large language models. <em>PersonaBot</em> by Ipsos, for example, combines survey data and AI to model consumer segments, but offers no public insight into its data sources, validation metrics, or applicability to political contexts.
+            Several recent projects have explored the simulation of human behavior using large language models. <strong>PersonaBot by Ipsos</strong>, for example, combines survey data and AI to model consumer segments, but offers no public insight into its <strong>data sources</strong>, <strong>validation metrics</strong>, or <strong>applicability to political contexts</strong>.
           </p>
           
           <p>
-            Academic work by Argyle et al. (2022) has shown that LLMs can simulate demographic groups based on survey traits, while Park et al. (2024) demonstrated how life-history interviews can inform rich agent simulations. However, most of these efforts rely on static prompts or survey-derived profiles. They tend to treat identity as a fixed input rather than an emergent, discursive process.
+            Academic work by Argyle et al. (2022) has shown that LLMs can simulate demographic groups based on survey traits, while Park et al. (2024) demonstrated how life-history interviews can inform rich agent simulations. However, most of these efforts rely on <strong>static prompts</strong> or <strong>survey-derived profiles</strong>. They tend to treat identity as a <strong>fixed input</strong> rather than an <strong>emergent, discursive process</strong>.
           </p>
           
           <img 
-            src="/OP01.png" 
+            src="/Capstone-web/OP01.png" 
             alt="Methodology comparison" 
             className="w-full h-auto rounded-lg"
           />
           
           <p>
-            This project takes a different path. It builds directly on the dialogic structure of focus groups, aiming to preserve contradiction, affect, and hesitation. It does not reduce political speech to opinion points. It treats it as a form of social storytelling.
-          </p>
-          
-          <p>
-            By combining fine-tuning, retrieval augmentation, and qualitative data, this prototype explores whether large language models can echo the voices of those who are often talked about, but rarely listened to.
+            <strong>This project takes a different path.</strong> It builds directly on the <strong>dialogic structure of focus groups</strong>, aiming to preserve <strong>contradiction, affect, and hesitation</strong>. It does not reduce political speech to opinion points. It treats it as a <strong>form of social storytelling</strong>. By combining <strong>fine-tuning</strong>, <strong>retrieval augmentation</strong>, and <strong>qualitative data</strong>, this prototype explores whether large language models can echo the voices of those who are often talked about, but rarely listened to.
           </p>
         </div>
       </div>
@@ -276,9 +272,9 @@ function App() {
       {builtSubPage === 'main' && (
         <>
           <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
-            <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed">
+            <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
               <p>
-                This project sits at the intersection of qualitative inquiry and computational modeling. Rather than discarding the interpretive richness of focus group research in favor of speed or scale, it seeks to operationalize that richness through a hybrid pipeline. Every stage, from data curation to modeling, was designed to preserve the complexity of real political discourse while enabling systematic simulation. Below is a breakdown of how this was achieved, step by step.
+                This project sits at the intersection of <strong>qualitative inquiry</strong> and <strong>computational modeling</strong>. Rather than discarding the interpretive richness of focus group research in favor of speed or scale, it seeks to <strong>operationalize that richness through a hybrid pipeline</strong>. Every stage, from <strong>data curation to modeling</strong>, was designed to preserve the complexity of real political discourse while enabling systematic simulation.
               </p>
             </div>
           </div>
@@ -344,19 +340,19 @@ function App() {
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">1. Qualitative Data Collection and Curation</h2>
             <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
               <p>
-                The prototype is built on a corpus of over 250 focus group transcripts collected in Mexico between 2023 and 2025 by CAPTA, the qualitative research agency I lead. Although these sessions were not originally conducted for a single project, they share a common concern: understanding public opinion in contexts of institutional distrust and political polarization.
+                The prototype is built on a <strong>corpus of over 250 focus group transcripts</strong> collected in Mexico between 2023 and 2025 by <strong>CAPTA</strong>, the qualitative research agency I lead. Although these sessions were not originally conducted for a single project, they share a common concern: <strong>understanding public opinion in contexts of institutional distrust and political polarization</strong>.
               </p>
               <p>
-                Participants were recruited using snowball sampling and screened according to AMAI segment rules. Within each group, we ensured variation in age and gender, and excluded repeat participants. Sessions were led by senior moderators trained in semi-structured and emergent techniques to ensure rich, reflective dialogue.
+                Participants were recruited using <strong>snowball sampling</strong> and screened according to <strong>AMAI segment rules</strong>. Within each group, we ensured <strong>variation in age and gender</strong>, and excluded <strong>repeat participants</strong>. Sessions were led by <strong>senior moderators</strong> trained in <strong>semi-structured and emergent techniques</strong> to ensure rich, reflective dialogue.
               </p>
               <p>
-                We selected two segments for simulation: working-class youth from CDMX (C-D+, 18–25) and middle-class professionals from Monterrey (C+B, 35–55). These were chosen due to their distinct political profiles and data availability. The first segment tended to support redistributive policies and expressed identification with President López Obrador. Older, middle-class from Monterrey respondents emphasized meritocracy and skepticism toward populist narratives.
+                We selected two segments for simulation: <strong>working-class youth from CDMX (C-D+, 18–25)</strong> and <strong>middle-class professionals from Monterrey (C+B, 35–55)</strong>. These were chosen due to their <strong>distinct political profiles</strong> and <strong>data availability</strong>. The first segment tended to support <strong>redistributive policies</strong> and expressed identification with <strong>President López Obrador</strong>. The second emphasized <strong>meritocracy</strong> and <strong>skepticism toward populist narratives</strong>.
               </p>
               <p>
-                Importantly, no segment was homogeneous. While patterns emerged, disagreement and tension were common. Rather than filter these out, moderators encouraged debate, making the corpus a dialogic space where ideas were contested and negotiated.
+                Importantly, <strong>no segment was homogeneous</strong>. While patterns emerged, <strong>disagreement and tension were common</strong>. Rather than filter these out, moderators encouraged <strong>debate</strong>, making the corpus a <strong>dialogic space</strong> where ideas were contested and negotiated.
               </p>
               <p>
-                The challenge and opportunity of using this corpus to fine-tune a generative model lies precisely in this tension. The goal is not to simulate what people think in the aggregate, but to approximate how they speak, how they reason, hesitate, identify, or contradict themselves. In a political environment saturated with polling averages and demographic abstractions, capturing the discursive lifeworld of different segments is not just methodologically novel. It may be epistemologically necessary.
+                The challenge and opportunity of using this corpus to fine-tune a generative model lies <strong>precisely in this tension</strong>. The goal is not to simulate what people think in the aggregate, but to approximate <strong>how they speak, how they reason, hesitate, identify, or contradict themselves</strong>. In a political environment saturated with <strong>polling averages</strong> and <strong>demographic abstractions</strong>, capturing the <strong>discursive lifeworld</strong> of different segments is not just methodologically novel. It may be <strong>epistemologically necessary</strong>.
               </p>
             </div>
           </div>
@@ -393,28 +389,31 @@ function App() {
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">2. NLP-Based Structuring and Quantification</h2>
             <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
               <p>
-                Once curated, the transcripts were transformed through a structured pipeline to enable fine-tuning and retrieval-augmented generation (RAG). This phase marked the beginning of applying the technical knowledge I developed at LIS, having arrived without prior coding experience. Through Python in Colab, I used for-loops to convert .txt transcripts into structured .csv files, and gradually adopted data science tools like Pandas to organize and manipulate the data.
+                Once curated, the transcripts were transformed through a structured pipeline to enable <strong>fine-tuning</strong> and <strong>retrieval-augmented generation (RAG)</strong>. This phase marked the beginning of applying the <strong>technical knowledge</strong> I developed at <strong>LIS</strong>, having arrived without prior coding experience. Through <strong>Python in Colab</strong>, I used <strong>for-loops</strong> to convert .txt transcripts into structured .csv files, and gradually adopted <strong>data science tools like Pandas</strong> to organize and manipulate the data.
               </p>
               <p>
-                This seemingly simple transformation from unstructured transcripts to structured databases was not only a key step in this project, but one I was able to replicate and implement in real-world research projects conducted at CAPTA, my own agency, during my time in the master's programme.
+                This seemingly simple transformation from <strong>unstructured transcripts to structured databases</strong> was not only a key step in this project, but one I was able to <strong>replicate and implement in real-world research projects</strong> conducted at <strong>CAPTA</strong>, my own agency, during my time in the master's programme.
               </p>
               <p>
-                For the fine tuning training we began by filtering out all moderator interventions, retaining only those labeled with the role "Participant." While this decision limits the dialogic context of the conversation, it also minimizes the risk of the model learning prompts or expectations shaped by the facilitator.
+                For the <strong>fine-tuning</strong> training we began by <strong>filtering out all moderator interventions</strong>, retaining only those labeled with the role <strong>"Participant"</strong>. While this decision limits the dialogic context of the conversation, it also <strong>minimizes the risk</strong> of the model learning prompts or expectations shaped by the facilitator.
               </p>
               <p>
-                Rather than cleaning or standardizing the transcripts for neutrality, stylistic elements were deliberately preserved. This included fillers, rhetorical devices, colloquialisms, and even emotional outbursts. No attempt was made to sanitize informal speech, as the core aim was to maintain the affective and argumentative quality of voter discourse.
+                Rather than cleaning or standardizing the transcripts for neutrality, <strong>stylistic elements were deliberately preserved</strong>. This included <strong>fillers, rhetorical devices, colloquialisms, and even emotional outbursts</strong>. No attempt was made to sanitize informal speech, as the core aim was to <strong>maintain the affective and argumentative quality</strong> of voter discourse.
               </p>
               <p>
-                For RAG and in order to make the search more efficient, I created blocks of interventions called "Rack_id." To structure coherent blocks of conversation, each unit was required to start with a moderator intervention, and subsequent moderator interventions were included to maintain coherence. Topics raised by moderators were also coded to all rack_id.
+                For <strong>RAG</strong>, and in order to make the search more efficient, I created blocks of interventions called <strong>"rack_id"</strong>. To structure coherent blocks of conversation, each unit was required to <strong>start with a moderator intervention</strong>, and subsequent moderator interventions were included to maintain coherence. <strong>Topics raised by moderators were also coded to all rack_id</strong>.
               </p>
               <p>
-                Careful attention was paid to token count. Each conversational block was designed to fall between a minimum of 450 tokens and a maximum of 1200, aligned with the constraints of the Salamandra 7B model. This range was selected to ensure enough content to preserve argumentative coherence while remaining within processing limits. In the context of RAG, it also ensured that retrieved blocks contained sufficient discursive context for the model to "know what is being talked about." Blocks were formatted in an Alpaca-style instruction template to make the training data compatible with standard instruction-tuned language models.
+                <strong>Careful attention was paid to token count.</strong> Each conversational block was designed to fall between a <strong>minimum of 450 tokens</strong> and a <strong>maximum of 1200</strong>, aligned with the constraints of the Salamandra 7B model. This range was selected to ensure <strong>argumentative coherence</strong> while staying within processing limits. In the context of RAG, it also ensured that <strong>retrieved blocks contained sufficient discursive context</strong> for the model to "know what is being talked about." Blocks were formatted in an <strong>Alpaca-style instruction template</strong> to make the training data compatible with standard instruction-tuned language models.
               </p>
               <p>
-                The corpus was embedded using the Qwen3-Embedding-4B model, with embeddings obtained via mean pooling over token representations. This model was selected for its strong semantic encoding capabilities and compatibility with long, informal, and affective texts like focus group transcripts. Its performance in capturing nuanced discursive content made it particularly well-suited for this project. Embeddings are numerical vectors that encode semantic meaning, enabling retrieval of contextually similar passages beyond simple keyword matching. These were indexed using FAISS with L2 (Euclidean) distance. FAISS was chosen for its speed and scalability, enabling real-time similarity search over thousands of blocks without sacrificing retrieval quality. A mapping between rack_id and vector index was stored to enable traceable retrieval during generation. No separate reranking step was applied; results were ordered based on direct FAISS nearest neighbor search.
+                The corpus was <strong>embedded using the Qwen3-Embedding-4B model</strong>, with embeddings obtained via mean pooling over token representations. This model was selected for its <strong>strong semantic encoding capabilities</strong> and <strong>compatibility with long, informal, and affective texts</strong> like focus group transcripts. Its performance in <strong>capturing nuanced discursive content</strong> made it particularly well-suited for this project.
               </p>
               <p>
-                This pipeline balances qualitative nuance with computational precision, treating discourse as layered, relational evidence. It enables the model to simulate political reasoning without flattening its complexity.
+                <strong>Embeddings are numerical vectors that encode semantic meaning</strong>, enabling retrieval of contextually similar passages beyond simple keyword matching. These were <strong>indexed using FAISS</strong> with <strong>L2 (Euclidean) distance</strong>. FAISS was chosen for its <strong>speed and scalability</strong>, enabling <strong>real-time similarity search</strong> over thousands of blocks without sacrificing retrieval quality. A mapping between <strong>rack_id and vector index</strong> was stored to enable <strong>traceable retrieval</strong> during generation. <strong>No separate reranking step</strong> was applied; results were ordered based on <strong>direct FAISS nearest neighbor search</strong>.
+              </p>
+              <p>
+                This pipeline balances <strong>qualitative nuance</strong> with <strong>computational precision</strong>, treating discourse as <strong>layered, relational evidence</strong>. It enables the model to <strong>simulate political reasoning without flattening its complexity</strong>.
               </p>
             </div>
           </div>
@@ -451,19 +450,19 @@ function App() {
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">3. Language-Based Modeling</h2>
             <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
               <p>
-                To simulate political discourse in a segment-specific and realistic way, this phase applied fine-tuning using QLoRA on the Salamandra‑7B‑instruct model. Salamandra was selected not only for its compatibility with open-source infrastructure, but because of its high proportion of Latin American Spanish in pretraining. This was crucial for retaining idiomatic expressions, tonal nuance, and culturally specific references present in the transcripts. The 7B version also allowed full training within the limits of a single A100 GPU on Google Colab Pro.
+                To simulate political discourse in a segment-specific and realistic way, this phase applied <strong>fine-tuning using QLoRA</strong> on the <strong>Salamandra‑7B‑instruct model</strong>. Salamandra was selected not only for its compatibility with open-source infrastructure, but because of its <strong>high proportion of Latin American Spanish</strong> in pretraining. This was crucial for retaining idiomatic expressions, tonal nuance, and culturally specific references present in the transcripts. The 7B version also allowed full training within the limits of a <strong>single A100 GPU on Google Colab Pro</strong>.
               </p>
               <p>
-                Fine-tuning was essential not only to replicate vocabulary, but to simulate the emotional and discursive register unique to each group. It enabled the model to internalize variation in tone, formality, and argumentative rhythm, aligning outputs with the expressive range of the source material.
+                Fine-tuning was essential not only to replicate vocabulary, but to simulate the <strong>emotional and discursive register</strong> unique to each group. It enabled the model to internalize variation in tone, formality, and argumentative rhythm, aligning outputs with the expressive range of the source material.
               </p>
               <p>
-                As introduced earlier, two separate models were trained: one for CDMX_C-D+_18–25 and another for MTY_C+B_35–55. This prevented cross-contamination of vocabulary, affect, and narrative structure. Rather than aiming for a universal chatbot, the goal was to simulate how different types of voters think, feel, and speak in political conversation.
+                As introduced earlier, <strong>two separate models</strong> were trained: one for <strong>CDMX_C-D+_18–25</strong> and another for <strong>MTY_C+B_35–55</strong>. This prevented cross-contamination of vocabulary, affect, and narrative structure. Rather than aiming for a universal chatbot, the goal was to simulate how different types of voters think, feel, and speak in political conversation.
               </p>
               <p>
-                To complement stylistic fidelity with factual grounding, Retrieval-Augmented Generation (RAG) was implemented. For each prompt, the system retrieved relevant conversation blocks from the embedded corpus and constructed a context-aware prompt before generation. This hybrid approach ensured that responses were not only voiced with segment-specific texture, but also grounded in concrete, thematically relevant material.
+                To complement stylistic fidelity with factual grounding, <strong>Retrieval-Augmented Generation (RAG)</strong> was implemented. For each prompt, the system retrieved relevant conversation blocks from the embedded corpus and constructed a <strong>context-aware prompt</strong> before generation. This hybrid approach ensured that responses were not only voiced with segment-specific texture, but also grounded in concrete, thematically relevant material.
               </p>
               <p>
-                Having fine-tuned the model and implemented RAG for contextual grounding, the next step was to define how questions would be posed and how responses would be generated. This involved specifying the structure of the prompts and calibrating generation parameters to maximize realism, coherence, and variation across simulated outputs.
+                Having fine-tuned the model and implemented RAG for contextual grounding, the next step was to define how questions would be posed and how responses would be generated. This involved specifying the <strong>structure of the prompts</strong> and calibrating <strong>generation parameters</strong> to maximize realism, coherence, and variation across simulated outputs.
               </p>
             </div>
           </div>
@@ -500,30 +499,26 @@ function App() {
             <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Prompt Structure and Generation Parameters</h2>
             <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
               <p>
-                To ensure consistent and realistic simulation of participant discourse, all questions were processed using a standardized prompt structure based on retrieval-augmented generation (RAG). Each prompt included real excerpts from focus groups, retrieved using FAISS and re-ranked via a cross-encoder, followed by a tailored instruction and the target question. The prompt followed this structure:
+                To ensure consistent and realistic simulation of participant discourse, all questions were processed using a <strong>standardized prompt structure</strong> based on <strong>retrieval-augmented generation (RAG)</strong>. Each prompt included <strong>real excerpts from focus groups</strong>, retrieved using <strong>FAISS</strong> and <strong>re-ranked via a cross-encoder</strong>, followed by a <strong>tailored instruction</strong> and the target question. The prompt followed this structure:
               </p>
               <div className="bg-[#FFFDF5] border border-[#95B1EE] rounded-lg p-4 my-4 font-mono text-sm">
-                <p><strong>Instruction:</strong></p>
-                <p>Based on the following fragments of real conversations:</p>
-                <p>{`{context}`}</p>
-                <p>Answer the following question with a realistic, informal tone similar to the style of the texts shown above, but clear, avoid introductions.</p>
-                <p>{`{question}`}</p>
+                <p><strong>Instruction:</strong> Based on the following fragments of real conversations: {`{context}`} Answer the following question with a <strong>realistic, informal tone</strong> similar to the style of the texts shown above, but <strong>clear, avoid introductions</strong>. {`{question}`}</p>
               </div>
               <p>
                 <strong>Final generation parameters:</strong>
               </p>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Number of retrieved blocks: 4</li>
-                <li>Max tokens per response: 180 to 200</li>
-                <li>Temperature: 0.4</li>
-                <li>Top-p (nucleus sampling): 0.8</li>
+                <li><strong>Number of retrieved blocks:</strong> 4</li>
+                <li><strong>Max tokens per response:</strong> 180 to 200</li>
+                <li><strong>Temperature:</strong> 0.4</li>
+                <li><strong>Top-p (nucleus sampling):</strong> 0.8</li>
               </ul>
               
               <p>
                 <strong>Justification:</strong>
               </p>
               <p>
-                The instruction was designed to guide the model toward natural and segment-appropriate speech. It emphasizes a realistic and informal tone to match the style of the retrieved focus group excerpts. The explicit phrase "but clear, avoid introductions" was added to prevent the model from producing formulaic or repetitive openings, encouraging it instead to simulate the direct and often emotionally charged way participants speak in real group settings.
+                The instruction was designed to guide the model toward <strong>natural and segment-appropriate speech</strong>. It emphasizes a <strong>realistic and informal tone</strong> to match the style of the retrieved focus group excerpts. The explicit phrase <strong>"but clear, avoid introductions"</strong> was added to prevent the model from producing <strong>formulaic or repetitive openings</strong>, encouraging it instead to simulate the <strong>direct and often emotionally charged</strong> way participants speak in real group settings.
               </p>
               <p>
                 As for the generation parameters:
@@ -535,7 +530,7 @@ function App() {
                 <li><strong>Top-p: 0.8</strong> - Limiting sampling to the top 80% of the probability mass helps generate text that is both plausible and slightly varied, without drifting into generic or irrelevant phrasing.</li>
               </ul>
               <p>
-                Together, these decisions were made to maximize stylistic fidelity, discursive realism, and segment-specific coherence, enabling the model to approximate not just what participants say, but how they say it.
+                Together, these decisions were made to maximize <strong>stylistic fidelity</strong>, <strong>discursive realism</strong>, and <strong>segment-specific coherence</strong>, enabling the model to approximate not just what participants say, but how they say it.
               </p>
             </div>
           </div>
@@ -981,14 +976,14 @@ function App() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/IntSent01.png" 
+                      src="/Capstone-web/IntSent01.png" 
                       alt="CDMX: Sentiment Distribution - Question 1" 
                       className="w-full h-auto"
                     />
                   </div>
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/IntSent02.png" 
+                      src="/Capstone-web/IntSent02.png" 
                       alt="CDMX: Sentiment Distribution - Question 2" 
                       className="w-full h-auto"
                     />
@@ -999,14 +994,14 @@ function App() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/IntSent03.png" 
+                      src="/Capstone-web/IntSent03.png" 
                       alt="MTY: Sentiment Distribution - Question 1" 
                       className="w-full h-auto"
                     />
                   </div>
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/IntSent04.png" 
+                      src="/Capstone-web/IntSent04.png" 
                       alt="MTY: Sentiment Distribution - Question 2" 
                       className="w-full h-auto"
                     />
@@ -1017,14 +1012,14 @@ function App() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/IntSent05.png" 
+                      src="/Capstone-web/IntSent05.png" 
                       alt="CDMX: Sentiment Distribution - Corpus vs Generated" 
                       className="w-full h-auto"
                     />
                   </div>
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/IntSent06.png" 
+                      src="/Capstone-web/IntSent06.png" 
                       alt="Boxplot of Sentiment: Corpus vs Generated" 
                       className="w-full h-auto"
                     />
@@ -1437,7 +1432,7 @@ function App() {
                   {/* Primera imagen: ExtSent01.png */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/ExtSent01.png" 
+                      src="/Capstone-web/ExtSent01.png" 
                       alt="External Sentiment Analysis - Chart 1" 
                       className="w-full h-auto"
                     />
@@ -1446,7 +1441,7 @@ function App() {
                   {/* Segunda imagen: ExtSent02.png */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/ExtSent02.png" 
+                      src="/Capstone-web/ExtSent02.png" 
                       alt="External Sentiment Analysis - Chart 2" 
                       className="w-full h-auto"
                     />
@@ -1587,14 +1582,14 @@ function App() {
                   <div className="grid grid-cols-2 gap-6">
                     <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                       <img 
-                        src="/ExtLex01.png" 
+                        src="/Capstone-web/ExtLex01.png" 
                         alt="External Lexical Similarity Analysis - Chart 1" 
                         className="w-full h-auto"
                       />
                     </div>
                     <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                       <img 
-                        src="/ExtLex02.png" 
+                        src="/Capstone-web/ExtLex02.png" 
                         alt="External Lexical Similarity Analysis - Chart 2" 
                         className="w-full h-auto"
                       />
@@ -1604,7 +1599,7 @@ function App() {
                   {/* Segunda imagen: ExtLex03 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/ExtLex03.png" 
+                      src="/Capstone-web/ExtLex03.png" 
                       alt="External Lexical Similarity Analysis - Chart 3" 
                       className="w-full h-auto"
                     />
@@ -1613,7 +1608,7 @@ function App() {
                   {/* Tercera imagen: ExtLex04 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/ExtLex04.png" 
+                      src="/Capstone-web/ExtLex04.png" 
                       alt="External Lexical Similarity Analysis - Chart 4" 
                       className="w-full h-auto"
                     />
@@ -1754,14 +1749,14 @@ function App() {
                   <div className="grid grid-cols-2 gap-6">
                     <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                       <img 
-                        src="/ExtSem01.png" 
+                        src="/Capstone-web/ExtSem01.png" 
                         alt="External Semantic Similarity Analysis - Chart 1" 
                         className="w-full h-auto"
                       />
                     </div>
                     <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                       <img 
-                        src="/ExtSem02.png" 
+                        src="/Capstone-web/ExtSem02.png" 
                         alt="External Semantic Similarity Analysis - Chart 2" 
                         className="w-full h-auto"
                       />
@@ -1771,7 +1766,7 @@ function App() {
                   {/* Segunda imagen: ExtSem03 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/ExtSem03.png" 
+                      src="/Capstone-web/ExtSem03.png" 
                       alt="External Semantic Similarity Analysis - Chart 3" 
                       className="w-full h-auto"
                     />
@@ -1780,7 +1775,7 @@ function App() {
                   {/* Tercera imagen: ExtSem04 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/ExtSem04.png" 
+                      src="/Capstone-web/ExtSem04.png" 
                       alt="External Semantic Similarity Analysis - Chart 4" 
                       className="w-full h-auto"
                     />
