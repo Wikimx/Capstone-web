@@ -156,7 +156,7 @@ function App() {
 
       try {
         // Make API call
-        const response = await fetch("/ask", {
+        const response = await fetch("https://a7a1bbaf0574.ngrok-free.app/ask", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -172,7 +172,18 @@ function App() {
         }
 
         const data = await response.json();
-        setResponse(data.response);
+        // Extract content after the last "### Respuesta:" marker
+        const fullResponse = data.response;
+        const lastResponderIndex = fullResponse.lastIndexOf("### Respuesta:");
+
+        if (lastResponderIndex !== -1) {
+          // Get content after the last "### Respuesta:" marker
+          const extractedContent = fullResponse.substring(lastResponderIndex + "### Respuesta:".length).trim();
+          setResponse(extractedContent);
+        } else {
+          // If marker not found, use the full response
+          setResponse(fullResponse);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "An unknown error occurred");
       } finally {
@@ -372,11 +383,11 @@ function App() {
             In the language of Rittel and Webber (1973), this constitutes a <strong>wicked problem</strong>: one that <strong>resists linear solutions</strong> and evolves with the tools used to address it. In such contexts, <strong>knowledge production must be not only technically sound but also ethically reflexive</strong>. Yet most of the methodologies used in public opinion research <strong>fall short</strong>. <strong>Surveys scale easily but miss nuance</strong>. <strong>Focus groups capture depth</strong>, but are <strong>labor-intensive, time-bound</strong>, and often <strong>disregarded once the fieldwork is over</strong>.
           </p>
 
-          <img 
-            src="/Capstone-web/TPAWIM01.png" 
-            alt="Problem visualization" 
-            className="w-full h-auto rounded-lg"
-          />
+                      <img 
+              src="/TPAWIM01.png" 
+              alt="Problem visualization" 
+              className="w-full h-auto rounded-lg"
+            />
 
           <p>
             One last point is rarely acknowledged: many qualitative agencies accumulate <strong>hundreds of transcripts</strong>, rich in <strong>discourse, emotion, and contradiction</strong>, only to archive them in folders that are <strong>never computationally processed or revisited</strong>. This creates a <strong>massive underused resource</strong> and a <strong>lost opportunity</strong> for <strong>deeper, iterative listening</strong>.
@@ -442,7 +453,7 @@ function App() {
           </p>
 
           <img 
-            src="/Capstone-web/OP01.png" 
+            src="/OP01.png" 
             alt="Methodology comparison" 
             className="w-full h-auto rounded-lg"
           />
@@ -663,14 +674,14 @@ function App() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                 <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                   <img 
-                    src="/Capstone-web/Fine Tuning.png" 
+                    src="/Fine%20Tuning.png" 
                     alt="Fine Tuning Process Visualization" 
                     className="w-full h-auto"
                   />
                 </div>
                 <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                   <img 
-                    src="/Capstone-web/RAG.png" 
+                    src="/RAG.png" 
                     alt="RAG (Retrieval-Augmented Generation) Process Visualization" 
                     className="w-full h-auto"
                   />
@@ -776,65 +787,66 @@ function App() {
     </div>
   );
 
+  const [demoFormData, setDemoFormData] = useState({
+    preferredDate: '',
+    preferredTime: '',
+    message: ''
+  });
+  const [demoFormStatus, setDemoFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [demoFormMessage, setDemoFormMessage] = useState('');
+
+  const handleDemoFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setDemoFormStatus('loading');
+    setDemoFormMessage('');
+
+    try {
+      // Initialize EmailJS with your credentials
+      emailjs.init("la-h937LHBTaJ0do2");
+
+      // Prepare the email template parameters
+      const templateParams = {
+        to_email: 'wikimx@gmail.com, j.garcialunaperez@lis.ac.uk, joaquin@captaestudios.com',
+        preferred_date: demoFormData.preferredDate,
+        preferred_time: demoFormData.preferredTime,
+        additional_message: demoFormData.message || 'No additional message provided',
+        submitted_on: new Date().toLocaleString(),
+        from_name: 'Anonymous User',
+        from_email: 'anonymous@demo-request.com'
+      };
+
+      // Send email using EmailJS
+      await emailjs.send(
+        'service_1s7ypgs',
+        'template_4on0p3n',
+        templateParams
+      );
+      
+      setDemoFormStatus('success');
+      setDemoFormMessage('Request submitted successfully! Your anonymous request has been sent.');
+      
+      // Reset form
+      setDemoFormData({
+        preferredDate: '',
+        preferredTime: '',
+        message: ''
+      });
+
+    } catch (error) {
+      console.error('EmailJS Error:', error);
+      setDemoFormStatus('error');
+      setDemoFormMessage('Failed to submit request. Please try again.');
+    }
+  };
+
+  const handleDemoFormChange = (field: string, value: string) => {
+    setDemoFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   const renderDemoPage = () => {
-    const [demoFormData, setDemoFormData] = useState({
-      preferredDate: '',
-      preferredTime: '',
-      message: ''
-    });
-    const [demoFormStatus, setDemoFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-    const [demoFormMessage, setDemoFormMessage] = useState('');
-
-    const handleDemoFormSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      setDemoFormStatus('loading');
-      setDemoFormMessage('');
-
-      try {
-        // Initialize EmailJS with your credentials
-        emailjs.init("la-h937LHBTaJ0do2");
-
-        // Prepare the email template parameters
-        const templateParams = {
-          to_email: 'wikimx@gmail.com, j.garcialunaperez@lis.ac.uk, joaquin@captaestudios.com',
-          preferred_date: demoFormData.preferredDate,
-          preferred_time: demoFormData.preferredTime,
-          additional_message: demoFormData.message || 'No additional message provided',
-          submitted_on: new Date().toLocaleString(),
-          from_name: 'Anonymous User',
-          from_email: 'anonymous@demo-request.com'
-        };
-
-        // Send email using EmailJS
-        await emailjs.send(
-          'service_1s7ypgs',
-          'template_4on0p3n',
-          templateParams
-        );
-        
-        setDemoFormStatus('success');
-        setDemoFormMessage('Request submitted successfully! Your anonymous request has been sent.');
-        
-        // Reset form
-        setDemoFormData({
-          preferredDate: '',
-          preferredTime: '',
-          message: ''
-        });
-
-      } catch (error) {
-        console.error('EmailJS Error:', error);
-        setDemoFormStatus('error');
-        setDemoFormMessage('Failed to submit request. Please try again.');
-      }
-    };
-
-    const handleDemoFormChange = (field: string, value: string) => {
-      setDemoFormData(prev => ({
-        ...prev,
-        [field]: value
-      }));
-    };
 
     return (
       <div className="max-w-5xl mx-auto">
@@ -1358,14 +1370,14 @@ function App() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/Capstone-web/IntSent01.png" 
+                      src="/IntSent01.png" 
                       alt="CDMX: Sentiment Distribution - Question 1" 
                       className="w-full h-auto"
                     />
                   </div>
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/Capstone-web/IntSent02.png" 
+                      src="/IntSent02.png" 
                       alt="CDMX: Sentiment Distribution - Question 2" 
                       className="w-full h-auto"
                     />
@@ -1376,14 +1388,14 @@ function App() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/Capstone-web/IntSent03.png" 
+                      src="/IntSent03.png" 
                       alt="MTY: Sentiment Distribution - Question 1" 
                       className="w-full h-auto"
                     />
                   </div>
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/Capstone-web/IntSent04.png" 
+                      src="/IntSent04.png" 
                       alt="MTY: Sentiment Distribution - Question 2" 
                       className="w-full h-auto"
                     />
@@ -1394,14 +1406,14 @@ function App() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/Capstone-web/IntSent05.png" 
+                      src="/IntSent05.png" 
                       alt="CDMX: Sentiment Distribution - Corpus vs Generated" 
                       className="w-full h-auto"
                     />
                   </div>
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/Capstone-web/IntSent06.png" 
+                      src="/IntSent06.png" 
                       alt="Boxplot of Sentiment: Corpus vs Generated" 
                       className="w-full h-auto"
                     />
@@ -1814,7 +1826,7 @@ function App() {
                   {/* Primera imagen: ExtSent01.png */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/Capstone-web/ExtSent01.png" 
+                      src="/ExtSent01.png" 
                       alt="External Sentiment Analysis - Chart 1" 
                       className="w-full h-auto"
                     />
@@ -1823,7 +1835,7 @@ function App() {
                   {/* Segunda imagen: ExtSent02.png */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/Capstone-web/ExtSent02.png" 
+                      src="/ExtSent02.png" 
                       alt="External Sentiment Analysis - Chart 2" 
                       className="w-full h-auto"
                     />
@@ -1964,14 +1976,14 @@ function App() {
                   <div className="grid grid-cols-2 gap-6">
                     <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                       <img 
-                        src="/Capstone-web/ExtLex01.png" 
+                        src="/ExtLex01.png" 
                         alt="External Lexical Similarity Analysis - Chart 1" 
                         className="w-full h-auto"
                       />
                     </div>
                     <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                       <img 
-                        src="/Capstone-web/ExtLex02.png" 
+                        src="/ExtLex02.png" 
                         alt="External Lexical Similarity Analysis - Chart 2" 
                         className="w-full h-auto"
                       />
@@ -1981,7 +1993,7 @@ function App() {
                   {/* Segunda imagen: ExtLex03 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/Capstone-web/ExtLex03.png" 
+                      src="/ExtLex03.png" 
                       alt="External Lexical Similarity Analysis - Chart 3" 
                       className="w-full h-auto"
                     />
@@ -1990,7 +2002,7 @@ function App() {
                   {/* Tercera imagen: ExtLex04 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/Capstone-web/ExtLex04.png" 
+                      src="/ExtLex04.png" 
                       alt="External Lexical Similarity Analysis - Chart 4" 
                       className="w-full h-auto"
                     />
@@ -2131,14 +2143,14 @@ function App() {
                   <div className="grid grid-cols-2 gap-6">
                     <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                       <img 
-                        src="/Capstone-web/ExtSem01.png" 
+                        src="/ExtSem01.png" 
                         alt="External Semantic Similarity Analysis - Chart 1" 
                         className="w-full h-auto"
                       />
                     </div>
                     <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                       <img 
-                        src="/Capstone-web/ExtSem02.png" 
+                        src="/ExtSem02.png" 
                         alt="External Semantic Similarity Analysis - Chart 2" 
                         className="w-full h-auto"
                       />
@@ -2148,7 +2160,7 @@ function App() {
                   {/* Segunda imagen: ExtSem03 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/Capstone-web/ExtSem03.png" 
+                      src="/ExtSem03.png" 
                       alt="External Semantic Similarity Analysis - Chart 3" 
                       className="w-full h-auto"
                     />
@@ -2157,7 +2169,7 @@ function App() {
                   {/* Tercera imagen: ExtSem04 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/Capstone-web/ExtSem04.png" 
+                      src="/ExtSem04.png" 
                       alt="External Semantic Similarity Analysis - Chart 4" 
                       className="w-full h-auto"
                     />
