@@ -59,9 +59,22 @@ function App() {
         setContentHeight(contentRef.current.scrollHeight);
 
         // Set up a MutationObserver to watch for changes in the content
-        const observer = new MutationObserver(() => {
-          // When content changes, update the height
-          if (contentRef.current) {
+        const observer = new MutationObserver((mutations) => {
+          // Filter out mutations that are just text changes in form inputs
+          const hasNonInputChanges = mutations.some(mutation => {
+            // Skip mutations that are just text changes in input/textarea elements
+            if (mutation.type === 'characterData') {
+              const target = mutation.target;
+              const inputElement = target.parentElement?.closest('input, textarea');
+              if (inputElement) {
+                return false; // Skip text changes in form inputs
+              }
+            }
+            return true;
+          });
+
+          // Only update height if there are non-input changes
+          if (hasNonInputChanges && contentRef.current) {
             setContentHeight(contentRef.current.scrollHeight);
           }
         });
