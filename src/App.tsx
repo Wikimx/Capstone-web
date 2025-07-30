@@ -792,9 +792,34 @@ function App() {
         preferred_date: demoFormData.preferredDate,
         preferred_time: demoFormData.preferredTime,
         additional_message: demoFormData.message || 'No additional message provided',
-        submitted_on: new Date().toLocaleString(),
-        from_name: 'Anonymous User',
-        from_email: 'anonymous@demo-request.com'
+        submitted_on: new Date().toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZoneName: 'short'
+        }),
+        from_name: 'Demo Request - Anonymous User',
+        from_email: 'demo-request@capstone-project.com',
+        subject: 'New Demo Access Request',
+        message_html: `
+          <h2>New Demo Access Request</h2>
+          <p><strong>Request submitted:</strong> ${new Date().toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZoneName: 'short'
+          })}</p>
+          <p><strong>Preferred Date:</strong> ${demoFormData.preferredDate}</p>
+          <p><strong>Preferred Time:</strong> ${demoFormData.preferredTime}</p>
+          <p><strong>Additional Message:</strong></p>
+          <p>${demoFormData.message || 'No additional message provided'}</p>
+          <hr>
+          <p><em>This is an anonymous demo request from the Capstone project website.</em></p>
+        `
       };
 
       // Send email using EmailJS
