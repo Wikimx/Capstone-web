@@ -57,44 +57,10 @@ function App() {
       if (isOpen && contentRef.current) {
         // Set the height to auto initially to get the full height
         setContentHeight(contentRef.current.scrollHeight);
-
-        // Set up a MutationObserver to watch for changes in the content
-        const observer = new MutationObserver((mutations) => {
-          // Filter out mutations that are just text changes in form inputs
-          const hasNonInputChanges = mutations.some(mutation => {
-            // Skip mutations that are just text changes in input/textarea elements
-            if (mutation.type === 'characterData') {
-              const target = mutation.target;
-              const inputElement = target.parentElement?.closest('input, textarea');
-              if (inputElement) {
-                return false; // Skip text changes in form inputs
-              }
-            }
-            return true;
-          });
-
-          // Only update height if there are non-input changes
-          if (hasNonInputChanges && contentRef.current) {
-            setContentHeight(contentRef.current.scrollHeight);
-          }
-        });
-
-        // Start observing the content for changes
-        observer.observe(contentRef.current, {
-          childList: true,      // Watch for changes to child elements
-          subtree: true,        // Watch all descendants, not just direct children
-          characterData: true,  // Watch for changes to text content
-          attributes: true      // Watch for changes to attributes
-        });
-
-        // Clean up the observer when component unmounts or dependencies change
-        return () => {
-          observer.disconnect();
-        };
       } else {
         setContentHeight(0);
       }
-    }, [isOpen, children]); // Re-measure when children change (e.g., when response is loaded)
+    }, [isOpen]); // Only re-measure when open state changes
 
     return (
       <div className="mb-8 bg-white rounded-xl shadow-sm border border-[#95B1EE] overflow-hidden transition-all duration-300 hover:shadow-md">
@@ -138,16 +104,19 @@ function App() {
       { id: "mty_c+b_35-55", name: "Monterrey Middle-class adults (C+B, 35–55)" }
     ];
 
+    // Only update contentKey if this is an active interactive component (not just a placeholder)
+    const isInteractiveComponent = text !== "Interactive zone placeholder - Your demo will go here";
+    
     // Update the content key when response changes to trigger parent recalculation
     useEffect(() => {
-      if (response) {
+      if (response && isInteractiveComponent) {
         // Small delay to ensure the DOM has updated with the new content
         const timer = setTimeout(() => {
           setContentKey(prevKey => prevKey + 1);
         }, 100);
         return () => clearTimeout(timer);
       }
-    }, [response]);
+    }, [response, isInteractiveComponent]);
 
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -214,7 +183,7 @@ function App() {
 
     return (
       <div 
-        key={contentKey} // Use contentKey to force re-render when response changes
+        key={isInteractiveComponent ? contentKey : undefined} // Only use contentKey for interactive components
         className={`${height} border-2 border-dashed border-[#95B1EE] rounded-lg bg-[#FFFDF5] transition-all duration-300 hover:border-[#ECE9DF] p-6`}
       >
         {text && <p className="text-[#4A4A4A] text-center px-4 mb-6">{text}</p>}
@@ -867,7 +836,8 @@ function App() {
           <h1 className="text-5xl font-bold text-[#2B3A6B] mb-4">The Demo</h1>
         </div>
 
-      <CollapsibleSection title="Schedule Demo Access" defaultOpen={true}>
+      <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
+        <h2 className="text-2xl font-bold text-[#2B3A6B] mb-6">Schedule Demo Access</h2>
         <div className="space-y-6">
           <div className="text-[#4A4A4A] text-justify leading-relaxed">
             <p className="mb-4">
@@ -965,7 +935,7 @@ function App() {
             </ul>
           </div>
         </div>
-      </CollapsibleSection>
+      </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
         <div className="prose max-w-none text-[#4A4A4A] text-justify leading-relaxed space-y-6">
