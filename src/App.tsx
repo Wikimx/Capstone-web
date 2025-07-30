@@ -366,7 +366,7 @@ function App() {
           </p>
 
                       <img 
-              src="/TPAWIM01.png" 
+              src="./TPAWIM01.png" 
               alt="Problem visualization" 
               className="w-full h-auto rounded-lg"
             />
@@ -435,7 +435,7 @@ function App() {
           </p>
 
           <img 
-            src="/OP01.png" 
+            src="./OP01.png" 
             alt="Methodology comparison" 
             className="w-full h-auto rounded-lg"
           />
@@ -656,14 +656,14 @@ function App() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                 <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                   <img 
-                    src="/Fine%20Tuning.png" 
+                    src="./Fine%20Tuning.png" 
                     alt="Fine Tuning Process Visualization" 
                     className="w-full h-auto"
                   />
                 </div>
                 <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                   <img 
-                    src="/RAG.png" 
+                    src="./RAG.png" 
                     alt="RAG (Retrieval-Augmented Generation) Process Visualization" 
                     className="w-full h-auto"
                   />
@@ -1353,14 +1353,14 @@ function App() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/IntSent01.png" 
+                      src="./IntSent01.png" 
                       alt="CDMX: Sentiment Distribution - Question 1" 
                       className="w-full h-auto"
                     />
                   </div>
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/IntSent02.png" 
+                      src="./IntSent02.png" 
                       alt="CDMX: Sentiment Distribution - Question 2" 
                       className="w-full h-auto"
                     />
@@ -1371,14 +1371,14 @@ function App() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/IntSent03.png" 
+                      src="./IntSent03.png" 
                       alt="MTY: Sentiment Distribution - Question 1" 
                       className="w-full h-auto"
                     />
                   </div>
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/IntSent04.png" 
+                      src="./IntSent04.png" 
                       alt="MTY: Sentiment Distribution - Question 2" 
                       className="w-full h-auto"
                     />
@@ -1389,14 +1389,14 @@ function App() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/IntSent05.png" 
+                      src="./IntSent05.png" 
                       alt="CDMX: Sentiment Distribution - Corpus vs Generated" 
                       className="w-full h-auto"
                     />
                   </div>
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/IntSent06.png" 
+                      src="./IntSent06.png" 
                       alt="Boxplot of Sentiment: Corpus vs Generated" 
                       className="w-full h-auto"
                     />
@@ -1809,7 +1809,7 @@ function App() {
                   {/* Primera imagen: ExtSent01.png */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/ExtSent01.png" 
+                      src="./ExtSent01.png" 
                       alt="External Sentiment Analysis - Chart 1" 
                       className="w-full h-auto"
                     />
@@ -1818,7 +1818,7 @@ function App() {
                   {/* Segunda imagen: ExtSent02.png */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/ExtSent02.png" 
+                      src="./ExtSent02.png" 
                       alt="External Sentiment Analysis - Chart 2" 
                       className="w-full h-auto"
                     />
@@ -1959,14 +1959,14 @@ function App() {
                   <div className="grid grid-cols-2 gap-6">
                     <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                       <img 
-                        src="/ExtLex01.png" 
+                        src="./ExtLex01.png" 
                         alt="External Lexical Similarity Analysis - Chart 1" 
                         className="w-full h-auto"
                       />
                     </div>
                     <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                       <img 
-                        src="/ExtLex02.png" 
+                        src="./ExtLex02.png" 
                         alt="External Lexical Similarity Analysis - Chart 2" 
                         className="w-full h-auto"
                       />
@@ -1976,7 +1976,7 @@ function App() {
                   {/* Segunda imagen: ExtLex03 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/ExtLex03.png" 
+                      src="./ExtLex03.png" 
                       alt="External Lexical Similarity Analysis - Chart 3" 
                       className="w-full h-auto"
                     />
@@ -1985,7 +1985,7 @@ function App() {
                   {/* Tercera imagen: ExtLex04 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/ExtLex04.png" 
+                      src="./ExtLex04.png" 
                       alt="External Lexical Similarity Analysis - Chart 4" 
                       className="w-full h-auto"
                     />
@@ -2126,14 +2126,14 @@ function App() {
                   <div className="grid grid-cols-2 gap-6">
                     <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                       <img 
-                        src="/ExtSem01.png" 
+                        src="./ExtSem01.png" 
                         alt="External Semantic Similarity Analysis - Chart 1" 
                         className="w-full h-auto"
                       />
                     </div>
                     <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                       <img 
-                        src="/ExtSem02.png" 
+                        src="./ExtSem02.png" 
                         alt="External Semantic Similarity Analysis - Chart 2" 
                         className="w-full h-auto"
                       />
@@ -2143,7 +2143,7 @@ function App() {
                   {/* Segunda imagen: ExtSem03 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/ExtSem03.png" 
+                      src="./ExtSem03.png" 
                       alt="External Semantic Similarity Analysis - Chart 3" 
                       className="w-full h-auto"
                     />
@@ -2152,7 +2152,7 @@ function App() {
                   {/* Tercera imagen: ExtSem04 */}
                   <div className="bg-white p-4 rounded-lg border border-[#E7F1A8] shadow-sm">
                     <img 
-                      src="/ExtSem04.png" 
+                      src="./ExtSem04.png" 
                       alt="External Semantic Similarity Analysis - Chart 4" 
                       className="w-full h-auto"
                     />
