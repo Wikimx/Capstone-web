@@ -2934,9 +2934,19 @@ function App() {
         <h1 className="text-5xl font-bold text-[#2B3A6B] mb-4">About the Researcher</h1>
       </div>
 
-      <CollapsibleSection title="Biography and Background" defaultOpen={true}>
-        <ContentPlaceholder height="h-64" text="Space for researcher biography, background, motivations, and contact information" />
-      </CollapsibleSection>
+      <div className="bg-white rounded-xl shadow-sm border border-[#95B1EE] p-8 mb-8">
+        <div className="text-gray-700 text-justify space-y-6 leading-relaxed">
+          <p>
+            Joaquín García Luna Pérez is a Mexican qualitative researcher with a background in social anthropology, specializing in public opinion, discourse analysis, and UX research. He has over a decade of experience in market research across diverse categories, working at the intersection of consumer insight and political behavior.
+          </p>
+          <p>
+            Joaquín is the founder of CAPTA, a qualitative research agency based in Mexico City, and currently a postgraduate student in the MASc in Interdisciplinary Problems and Methods at the London Interdisciplinary School. His current work explores how generative AI can amplify the value of qualitative data by simulating voter discourse in context-sensitive ways.
+          </p>
+          <p>
+            <strong>Contact:</strong> joaquin@captaestudios.com
+          </p>
+        </div>
+      </div>
 
       <NavigationButtons />
     </div>
